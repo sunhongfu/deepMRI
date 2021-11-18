@@ -35,7 +35,7 @@ phase = nii.img;
 imsize = size(phase);
 imsize2 = round(imsize.*vox/min(vox));
 vox2 = imsize.*vox/imsize2;
-phase = imresize3(phase,imsize2);
+phase = angle(imresize3(exp(1j*phase),imsize2));
 
 % load mask if available
 if ~ exist('MaskPath','var') || isempty(MaskPath)
