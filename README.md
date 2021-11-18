@@ -24,7 +24,7 @@
 # <span id="head2"> xQSM for QSM dipole inversion </span>
 **xQSM: quantitative susceptibility mapping with octave convolutional and noise-regularized neural networks**
 
-![Whole Framework](https://github.com/sunhongfu/deepMRI/blob/master/xQSM/Figs/xQSM_framework.png)
+![Whole Framework](https://www.dropbox.com/s/bq7gsc540gy2kgc/Fig1.png?raw=1)
 
 [source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/xQSM) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2004.06281) &nbsp;  | &nbsp;  [NMR in Biomed (full paper)](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/nbm.4461)
 
@@ -37,7 +37,7 @@
 
 [source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/DCRNet) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2103.09375) &nbsp;  |  &nbsp;  [NeuroImage (full paper)](https://www.sciencedirect.com/science/article/pii/S1053811921006790)
 
-![Whole Framework](https://github.com/sunhongfu/deepMRI/blob/master/DCRNet/img/Figs_1.png)
+![Whole Framework](https://www.dropbox.com/s/f729s5l2xvpwjfx/Figs_1.png?raw=1)
 
 &nbsp;
 &nbsp;
@@ -48,6 +48,6 @@
 
 [source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/iQSM) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2111.07665)
 
-![Whole Framework](https://github.com/sunhongfu/deepMRI/blob/master/iQSM/Figs/Figs_1.png)
+![Whole Framework](https://www.dropbox.com/s/7bxkyu1utxux76k/Figs_1.png?raw=1)
 
 [⬆ top](#readme)
