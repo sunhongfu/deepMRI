@@ -1,41 +1,46 @@
-import torch 
+import torch
 import torch.nn as nn
 import numpy as np
 import scipy.io as scio
 from Lap_Unet import *
-import time 
+import time
 from argparse import ArgumentParser
 import os
 
 parser = ArgumentParser(description='iQSM')
 
-parser.add_argument('-I', '--InputFile', type=str, default='./', help='Input file saved using SaveInput.m')
-parser.add_argument('-O', '--OutputDirectory', type=str, default='./', help='output folder for iQSM and iQFM reconstruction')
+parser.add_argument('-I', '--InputFile', type=str, default='./',
+                    help='Input file saved using SaveInput.m')
+parser.add_argument('-O', '--OutputDirectory', type=str, default='./',
+                    help='output folder for iQSM and iQFM reconstruction')
+parser.add_argument('-C', '--CheckpointsDirectory', type=str, default='./',
+                    help='checkpoints folder for iQSM and iQFM pretrained networks')
 
 args = parser.parse_args()
 
 InputPath = args.InputFile
 OutputPath = args.OutputDirectory
+CheckpointsPath = args.CheckpointsDirectory
 
 if __name__ == '__main__':
 
-    with torch.no_grad():        
+    with torch.no_grad():
         print('Network Loading')
 
-        ## load trained network 
+        # load trained network
         #LGOP =  scio.loadmat("3D_Laplacian_Operator.mat", verify_compressed_data_integrity=False)
         #conv_op = LGOP['LM']
-        conv_op = [[[ 1/13,  3/26,  1/13],
-            [ 3/26,  3/13,  3/26],
-            [ 1/13,  3/26,  1/13]],
-            
-            [[3/26,  3/13,  3/26],
-            [ 3/13, -44/13,  3/13],
-            [ 3/26,  3/13,  3/26]],
+        conv_op = [[[1/13,  3/26,  1/13],
+                    [3/26,  3/13,  3/26],
+                    [1/13,  3/26,  1/13]],
 
-            [[1/13,  3/26,  1/13],
-            [ 3/26,  3/13,  3/26],
-            [ 1/13,  3/26,  1/13]],]
+                   [[3/26,  3/13,  3/26],
+                    [3/13, -44/13,  3/13],
+                    [3/26,  3/13,  3/26]],
+
+                   [[1/13,  3/26,  1/13],
+                    [3/26,  3/13,  3/26],
+                    [1/13,  3/26,  1/13]], ]
         conv_op = np.array(conv_op)
         conv_op = torch.from_numpy(conv_op)
         conv_op = conv_op.float()
@@ -47,11 +52,17 @@ if __name__ == '__main__':
         Unet_chi = Unet(4, 1, 1)
         Unet_chi = nn.DataParallel(Unet_chi)
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        Unet_chi.load_state_dict(torch.load('./iQSM_UnetPart.pth', map_location = device))
+        checkpoint_path = os.path.expanduser(
+            CheckpointsPath) + '/iQSM_UnetPart.pth'
+        Unet_chi.load_state_dict(torch.load(
+            checkpoint_path, map_location=device))
 
         Unet_lfs = Unet(4, 1, 1)
         Unet_lfs = nn.DataParallel(Unet_lfs)
-        Unet_lfs.load_state_dict(torch.load('./iQFM_UnetPart.pth', map_location = device))
+        checkpoint_path = os.path.expanduser(
+            CheckpointsPath) + '/iQFM_UnetPart.pth'
+        Unet_lfs.load_state_dict(torch.load(
+            checkpoint_path, map_location=device))
 
         iQSM = Lap_Unet(Lap_Layer, Unet_chi)
         iQFM = Lap_Unet(Lap_Layer, Unet_lfs)
@@ -75,15 +86,15 @@ if __name__ == '__main__':
         image = torch.unsqueeze(image, 0)
 
         mask = matImage['mask']
-        mask = np.array(mask )
+        mask = np.array(mask)
 
-        mask  = torch.from_numpy(mask )
+        mask = torch.from_numpy(mask)
 
-        mask  = mask .float()
-        
-        mask  = torch.unsqueeze(mask , 0)
+        mask = mask .float()
 
-        mask  = torch.unsqueeze(mask , 0)
+        mask = torch.unsqueeze(mask, 0)
+
+        mask = torch.unsqueeze(mask, 0)
 
         TE = matImage['TE']
         TE = np.array(TE)
@@ -105,13 +116,13 @@ if __name__ == '__main__':
         B0 = B0.to(device)
 
         print('reconing ...')
-        
-        time_start=time.time()
+
+        time_start = time.time()
 
         pred_lfs = iQFM(image, mask, TE, B0)
         pred_chi = iQSM(image, mask, TE, B0)
-        
-        time_end =time.time()
+
+        time_end = time.time()
         print(time_end - time_start)
 
         pred_lfs = pred_lfs * mask
@@ -131,11 +142,8 @@ if __name__ == '__main__':
 
         print('Saving results')
         path = os.path.expanduser(OutputPath) + '/iQFM.mat'
-        scio.savemat(path, {'pred_lfs':pred_lfs})
+        scio.savemat(path, {'pred_lfs': pred_lfs})
 
         path = os.path.expanduser(OutputPath) + '/iQSM.mat'
-        scio.savemat(path, {'pred_chi':pred_chi})
+        scio.savemat(path, {'pred_chi': pred_chi})
         print('end')
-
-
-
