@@ -47,9 +47,9 @@
 # <span id="head2"> xQSM for QSM dipole inversion </span>
 **xQSM: quantitative susceptibility mapping with octave convolutional and noise-regularized neural networks**
 
-![Whole Framework](https://www.dropbox.com/s/bq7gsc540gy2kgc/Fig1.png?raw=1)
-
 [source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/xQSM) &nbsp;  | &nbsp;  [data & checkpoints (dropbox)](https://www.dropbox.com/sh/weps2m849svsh93/AAAAPqqKcLkL10Arqhy-3h_Fa?dl=0) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2004.06281) &nbsp;  | &nbsp;  [NMR in Biomed (full paper)](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/nbm.4461)
+
+![Whole Framework](https://www.dropbox.com/s/bq7gsc540gy2kgc/Fig1.png?raw=1)
 
 &nbsp;
 &nbsp;
