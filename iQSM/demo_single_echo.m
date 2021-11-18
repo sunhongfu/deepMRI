@@ -49,7 +49,7 @@ else
     mask = nii.img;
     % interpolate the mask to isotropic
     if interp_flag
-        mask = imresize3(mask,imsize2(1:3),'linear');
+        mask = imresize3(mask,imsize2(1:3));
     end
 end
 
