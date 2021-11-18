@@ -9,7 +9,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set your own data paths and parameters
 deepMRI_root = '~/Downloads/deepMRI'; % where deepMRI git repo is downloaded/cloned to
-checkpoints  = '~/Downloads/iQSM_data/checkpoints';
+checkpoints  = '~/Downloads/iQSM_data/checkpoints'; % where the pretrained iQSM/iQFM network checkpoints are downloaded
 PhasePath    = '~/Downloads/iQSM_data/demo/ph_multi_echo.nii';  % where raw phase data is (in NIFTI format)
 ReconDir     = '~/Downloads/iQSM_data/demo_recon/';  %% where to save reconstruction output
 Eroded_voxel = 0;  %  set number of voxels for brain mask erosion; 0 means no erosion;
