@@ -71,7 +71,7 @@ Fig. 2: Comparison of different QSM methods on three ICH patients. Susceptibilit
 1. Clone this repository. 
 
 ```
-    git clone https://github.com/YangGaoUQ/iQSM.git
+    git clone https://github.com/sunhongfu/deepMRI.git
 ```
 2. Install prerequisites (on linux system);
     1. Installl anaconda (https://docs.anaconda.com/anaconda/install/linux/); 

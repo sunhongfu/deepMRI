@@ -46,7 +46,7 @@ Fig. 2: The architecture of the proposed DCRNet, which is developed from a deep 
 1. Clone this repository. 
 
 ```
-    git clone https://github.com/YangGaoUQ/DCRNet.git
+    git clone https://github.com/sunhongfu/deepMRI.git
 ```
 2. Install prerequisites (on linux system);
     1. Installl anaconda (https://docs.anaconda.com/anaconda/install/linux/); 
