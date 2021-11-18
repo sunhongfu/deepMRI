@@ -24,12 +24,12 @@ A COSMOS map is used as the groud truth/label for quantitative assessment.
 
 ## <span id="head2"> Overall Framework </span>
 
-![Whole Framework](https://github.com/sunhongfu/deepMRI/blob/master/xQSM/Figs/xQSM_framework.png)
+![Whole Framework](https://www.dropbox.com/s/bq7gsc540gy2kgc/Fig1.png?raw=1)
 Fig. 1. Overview of the proposed xQSM method. The top row demonstrates the preparation process with the in vivo training datasets. Octave convolution is shown in the middle row, which introduces an X-shaped operation for communication between feature maps of different resolutions. Training input patches pass through a noise-adding layer (yellow) during each iteration step. The bottom row illustrates the xQSM network architecture based on the U-net backbone。 
 
 # <span id="head2"> Representative Results </span>
 
-![Representative Results](https://github.com/sunhongfu/deepMRI/blob/master/xQSM/Figs/Fig2.png)
+![Representative Results](https://www.dropbox.com/s/qlb9b7wjlwipf90/Fig2.png?raw=1)
 Fig. 2. Comparison of different QSM methods on 10 in vivo local field maps (five 0.6 mm isotropic from 7 T and five 1 mm isotropic from 3 T). Average QSM maps and DGM zoomed-in images are shown in the top four rows. Yellow arrows point to the apparent DGM susceptibility contrast loss with respect to the Calculation Of Susceptibility through Multiple Orientation Sampling (COSMOS). 
 
 # <span id="head4"> Manual </span>
