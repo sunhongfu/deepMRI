@@ -1,8 +1,10 @@
 %% This demo shows the complete reconstruction pipeline for iQSM on single-echo MRI phase data
 %% Assume your raw phase data is in NIFTI format
 
-% you can download demo data and checkpoints here: https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0
-% github repo for deepMRI is here: https://github.com/sunhongfu/deepMRI
+% (1) download demo data and checkpoints here: https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0
+        % e.g., in terminal: wget -O iQSM_data.zip https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0; unzip iQSM_data.zip
+% (2) download or clone github repo for deepMRI: https://github.com/sunhongfu/deepMRI
+        % e.g., in terminal: git clone https://github.com/sunhongfu/deepMRI or wget https://github.com/sunhongfu/deepMRI/archive/refs/heads/master.zip; unzip master.zip
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
