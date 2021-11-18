@@ -20,12 +20,12 @@
 
 ## <span id="head2">(1) Overall Framework </span>
 
-![Whole Framework](https://github.com/YangGaoUQ/DCRNet/blob/main/img/Figs_1.png)
+![Whole Framework](https://www.dropbox.com/s/f729s5l2xvpwjfx/Figs_1.png?raw=1)
 Fig. 1: Overview of the proposed QSM accelerating scheme.  
 
 ## <span id="head3">(2) Data Flow in Networks </span>
 
-![Data Flow](https://github.com/YangGaoUQ/DCRNet/blob/main/img/Figs_2.png)
+![Data Flow](https://www.dropbox.com/s/2519jlm4cr8g9cp/Figs_2.png?raw=1)
 Fig. 2: The architecture of the proposed DCRNet, which is developed from a deep residual network backbone using complex convolutional operations.
 
 # <span id="head4"> Manual </span>
