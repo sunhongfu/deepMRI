@@ -12,7 +12,7 @@
 	- [(2) Data Flow in Networks](#head3)
 - [ Manual](#head4)
 	- [Requirements](#head5)
-	- [Quick Start (using example data)](#head6)
+	- [Quick Start (on demo data)](#head6)
 	- [The Whole Reconstruction Pipeline (on your own data)](#head7)
 	- [Train new DCRNet](#head8)
 
@@ -59,7 +59,7 @@ Fig. 2: The architecture of the proposed DCRNet, which is developed from a deep 
         ```
 3. Now you are ready for MRI magnitude and phase reconstructions, however, for QSM reconstruction, do not forget to install Hongfu Sun's QSM toolbox and FMRIB Software Library.   
 
-4. Download the Example Data provided by the author (https://www.dropbox.com/sh/p9k9rq8zux2bkzq/AADSgw3bECQ9o1dPpIoE5b85a?dl=0), then unzip and move the file ('kspace_example.mat') into folder './TestData/'. 
+4. Download the demo data provided by the author (https://www.dropbox.com/sh/p9k9rq8zux2bkzq/AADSgw3bECQ9o1dPpIoE5b85a?dl=0), then unzip and move the file ('kspace_example.mat') into folder './TestData/'. 
 
 5. Open a new terminal, and run the following command, then you will find the corresponding MRI and QSM reconstructions in the folder 'MRI_QSM_recon'
 ```

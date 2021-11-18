@@ -1,6 +1,6 @@
 # Instant tissue field and magnetic susceptibility mapping from MRI raw phase using Laplacian enabled deep neural networks
 
-- This repository is for a large-stencil Laplacian preprocessed deep learning-based neural network for near instant quantitative field and susceptibility mapping (i.e., iQFM and iQSM), enabling a single-step (end-to-end) local field and QSM reconstrcution from the raw MRI phase images, which is introduced in this paper: https://arxiv.org/abs/2111.07665 (under review).
+- This repository is for a large-stencil Laplacian preprocessed deep neural network for near instant quantitative field and susceptibility mapping (i.e., iQFM and iQSM), enabling a single-step (end-to-end) local field and QSM reconstrcution from the raw MRI phase images, which is introduced in this paper: https://arxiv.org/abs/2111.07665 (under review).
 
 * This code was built and tested on Centos 7.8 with Nvdia Tesla V100 and macos12.0.1/ubuntu 19.10 with GTX 1060.
 
@@ -12,7 +12,7 @@
 - [ Manual](#head4)
   - [Requirements](#head5)
     - [Codes Description](#head9)
-  - [Quick Start (using example data)](#head6)
+  - [Quick Start (on data)](#head6)
   - [Reconstruction on your own data](#head7)
   - [Train new iQSM and iQFM networks](#head8)
 
@@ -67,7 +67,7 @@ Fig. 2: Comparison of different QSM methods on three ICH patients. Susceptibilit
         - TrainiQFM_and_iQSM.py  ---- train iQSM and iQFM simultaneously with data fidelity loss
         - TrainiQFM_and_iQSM_16c.py  ---- network training (more learnable kernels in Lap-Layer)
 
-## <span id="head6"> Quick Start (using example data) </span>
+## <span id="head6"> Quick Start (on demo data) </span>
 
 1. Clone this repository.
 
@@ -86,7 +86,7 @@ Fig. 2: Comparison of different QSM methods on three ICH patients. Susceptibilit
       ```
 3. Download our demo data from Dropbox (https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0)
 
-4. Open a new terminal, and run the following command, then you will find QSM reconstructions in the folder './QSM_recons'
+4. Open a new terminal, and run the following command for single- and multi-echo MRI data, respectively; 
 
 ```
     cd ./iQSM
