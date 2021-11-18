@@ -18,7 +18,7 @@ B0           = 3; % set B0 field (in Tesla)
 vox          = [1 1 1]; % set voxel size a.k.a image resolution (in millimeter)
 
 %% optional mask path to be set, simply comment out if not available
-MaskPath = '~/Downloads/iQSM_data/demo/mask_single_echo.nii'; %% Path for brain mask; set to one will skip brain masking
+MaskPath = '~/Downloads/iQSM_data/demo/mask_single_echo.nii'; %% brain mask; set to one will skip brain masking
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -35,7 +35,11 @@ phase = nii.img;
 imsize = size(phase);
 imsize2 = round(imsize.*vox/min(vox));
 vox2 = imsize.*vox/imsize2;
-phase = angle(imresize3(exp(1j*phase),imsize2));
+interp_flag = ~isequal(imsize,imsize2);
+
+if interp_flag
+    phase = angle(imresize3(exp(1j*phase),imsize2));
+end
 
 % load mask if available
 if ~ exist('MaskPath','var') || isempty(MaskPath)
@@ -43,6 +47,10 @@ if ~ exist('MaskPath','var') || isempty(MaskPath)
 else
     nii = load_nii(MaskPath);
     mask = nii.img;
+    % interpolate the mask to isotropic
+    if interp_flag
+        mask = imresize3(mask,imsize2(1:3),'linear');
+    end
 end
 
 % mkdir for output folders
@@ -68,21 +76,27 @@ load([ReconDir,'/iQFM.mat']);
 pred_chi = ZeroRemoving(pred_chi, pos);
 pred_lfs = ZeroRemoving(pred_lfs, pos);
 
+if interp_flag
 
-nii = make_nii(pred_chi, vox);
-save_nii(nii, [ReconDir,'/iQSM_iso.nii']);
+    nii = make_nii(pred_chi, vox2);
+    save_nii(nii, [ReconDir,'/iQSM_interp.nii']);
 
-nii = make_nii(pred_lfs, vox);
-save_nii(nii, [ReconDir,'/iQFM_iso.nii']);
+    nii = make_nii(pred_lfs, vox2);
+    save_nii(nii, [ReconDir,'/iQFM_interp.nii']);
 
 
-% back to original resolution if anisotropic
-pred_chi = imresize3(pred_chi,imsize);
-pred_lfs = imresize3(pred_lfs,imsize);
+    % back to original resolution if anisotropic
+    pred_chi = imresize3(pred_chi,imsize);
+    pred_lfs = imresize3(pred_lfs,imsize);
 
+end
 
 nii = make_nii(pred_chi, vox);
 save_nii(nii, [ReconDir,'/iQSM.nii']);
 
 nii = make_nii(pred_lfs, vox);
 save_nii(nii, [ReconDir,'/iQFM.nii']);
+
+delete([ReconDir,'/Network_Input.mat']);
+delete([ReconDir,'/iQFM.mat']);
+delete([ReconDir,'/iQSM.mat']);
