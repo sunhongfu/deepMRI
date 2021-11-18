@@ -1,10 +1,9 @@
 %% This demo shows the complete reconstruction pipeline for iQSM on single-echo MRI phase data
 %% Assume your raw phase data is in NIFTI format
 
-% (1) download demo data and checkpoints here: https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0
-        % e.g., in terminal: wget -O iQSM_data.zip https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0; unzip iQSM_data.zip
-% (2) download or clone github repo for deepMRI: https://github.com/sunhongfu/deepMRI
-        % e.g., in terminal: git clone https://github.com/sunhongfu/deepMRI or wget https://github.com/sunhongfu/deepMRI/archive/refs/heads/master.zip; unzip master.zip
+
+% (1) download or clone github repo for deepMRI: https://github.com/sunhongfu/deepMRI
+% (2) download demo data and checkpoints here: https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -34,23 +33,11 @@ phase = nii.img;
 
 % interpolate the images to isotropic
 imsize = size(phase);
-FOVsize = imsize.*vox;
-phase = single(phase);
-k = 1/sqrt(numel(phase))*fftshift(fftshift(fftshift(fft(fft(fft(exp(1j*phase),[],1),[],2),[],3),1),2),3);
-pad_size = round((imsize.*vox./min(vox) - imsize)/2);
-k = padarray(k,pad_size);
-phase = angle(sqrt(numel(k))*ifft(ifft(ifft(ifftshift(ifftshift(ifftshift(k,1),2),3),[],1),[],2),[],3));
-clear k;
-imsize = size(phase);
-vox = FOVsize./imsize;
+imsize2 = round(imsize.*vox/min(vox));
+vox2 = imsize.*vox/imsize2;
+phase = imresize3(phase,imsize2);
 
-if ~ exist('MagPath','var') || isempty(MagPath)
-    mag = ones(size(phase));
-else
-    nii = load_nii(MagPath);
-    mag = nii.img;
-end
-
+% load mask if available
 if ~ exist('MaskPath','var') || isempty(MaskPath)
     mask = ones(size(phase));
 else
@@ -90,13 +77,9 @@ save_nii(nii, [ReconDir,'/iQFM_iso.nii']);
 
 
 % back to original resolution if anisotropic
-k = 1/sqrt(numel(pred_chi))*fftshift(fftshift(fftshift(fft(fft(fft(pred_chi,[],1),[],2),[],3),1),2),3);
-k = k(pad_size(1)+1:end-pad_size(1), pad_size(2)+1:end-pad_size(2), pad_size(3)+1:end-pad_size(3));
-pred_chi = real(sqrt(numel(k))*ifft(ifft(ifft(ifftshift(ifftshift(ifftshift(k,1),2),3),[],1),[],2),[],3));
+pred_chi = imresize3(pred_chi,imsize);
+pred_lfs = imresize3(pred_lfs,imsize);
 
-k = 1/sqrt(numel(pred_lfs))*fftshift(fftshift(fftshift(fft(fft(fft(pred_lfs,[],1),[],2),[],3),1),2),3);
-k = k(pad_size(1)+1:end-pad_size(1), pad_size(2)+1:end-pad_size(2), pad_size(3)+1:end-pad_size(3));
-pred_lfs = real(sqrt(numel(k))*ifft(ifft(ifft(ifftshift(ifftshift(ifftshift(k,1),2),3),[],1),[],2),[],3));
 
 nii = make_nii(pred_chi, vox);
 save_nii(nii, [ReconDir,'/iQSM.nii']);
