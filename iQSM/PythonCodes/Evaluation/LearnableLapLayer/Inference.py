@@ -47,6 +47,8 @@ if __name__ == '__main__':
         conv_op = torch.unsqueeze(conv_op, 0)
         conv_op = torch.unsqueeze(conv_op, 0)
 
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
         Lap_Layer_iQSM = LapLayer(conv_op)
 
         Lap_Layer_iQSM = nn.DataParallel(Lap_Layer_iQSM)
@@ -67,7 +69,7 @@ if __name__ == '__main__':
 
         Unet_chi = Unet(4, 16, 1)
         Unet_chi = nn.DataParallel(Unet_chi)
-        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
         checkpoint_path = os.path.expanduser(
             CheckpointsPath) + '/iQSM_Unet_Part_LearnableLapLayer.pth'
         Unet_chi.load_state_dict(torch.load(
