@@ -82,7 +82,7 @@ Fig. 2: Comparison of different QSM methods on three ICH patients. Susceptibilit
             conda install pytorch cudatoolkit=10.2 -c pytorch
             conda install scipy
         ```
-3. Download our demo data from google drive https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0 
+3. Download our demo data from Dropbox (https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0)
 
 3. Open a new terminal, and run the following command, then you will find QSM reconstructions in the folder './QSM_recons'
 ```

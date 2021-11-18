@@ -14,7 +14,7 @@
 
 [iQSM for single-step instant QSM](#head4)
 
-[DCRnet for QSM and R2* acceleration](#head3)
+[DCRNet for QSM and R2* acceleration](#head3)
 
 [xQSM for QSM dipole inversion](#head2)
 
