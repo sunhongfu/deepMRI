@@ -19,12 +19,12 @@
 
 ## <span id="head2">(1) Overall Framework </span>
 
-![Whole Framework](https://github.com/sunhongfu/deepMRI/blob/master/iQSM/Figs/Figs_1.png)
+![Whole Framework](https://www.dropbox.com/s/7bxkyu1utxux76k/Figs_1.png?raw=1)
 Fig. 1: Overview of iQFM and iQSM framework using the proposed Lap-Unet architecture, composed of a tailored Lap-Layer and a 3D residual Unet.
 
 ## <span id="head3">(2) Representative Results </span>
 
-![Representative Results](https://github.com/sunhongfu/deepMRI/blob/master/iQSM/Figs/Figs_2.png)
+![Representative Results](https://www.dropbox.com/s/9jt391q22sgber6/Figs_2.png?raw=1)
 Fig. 2: Comparison of different QSM methods on three ICH patients. Susceptibility images of two orthogonal views are illustrated for each subject. Red arrows point to the artifacts near the hemorrhage sources in different QSM reconstructions. 
 
 # <span id="head4"> Manual </span>
