@@ -106,6 +106,18 @@ for echo_num = 1 : imsize(4)
     clear tmp_phase; 
 end
 
+
+
+%% save results of all echoes before echo fitting
+nii = make_nii(chi, vox2);
+save_nii(nii, [ReconDir, 'iQSM_all_echoes.nii']);
+
+nii = make_nii(lfs, vox2);
+save_nii(nii, [ReconDir, 'iQFM_all_echoes.nii']);
+
+
+
+
 %% magnitude weighted echo-fitting and save as NIFTI
 
 chi_fitted = echofit(chi, mag, TE);
