@@ -43,13 +43,15 @@ Fig. 2. Comparison of different QSM methods on 10 in vivo local field maps (five
     - MATLAB 2017b or later 
 
 ## <span id="head6"> Quick start on demo data </span>
+
 we have provided two demo scripts in folder 'matlab/eval/run_demo.m' and 'python/eval/run_demo.ipynb' for matlab and pytorch version xQSM quick testing on our demo data, respectively 
 
-the demo data are attached here: https://www.dropbox.com/sh/weps2m849svsh93/AAAAPqqKcLkL10Arqhy-3h_Fa?dl=0 
+the demo data are avaiale at https://www.dropbox.com/sh/weps2m849svsh93/AAAAPqqKcLkL10Arqhy-3h_Fa?dl=0 
 
 ## <span id="head7"> Reconstruction on your own data </span>
+
 Prepare your data in NIFTI format, and replace them with the demo data. 
 
 ## <span id="head8"> Train new xQSM networks </span>
 
-The training codes are provided in folder 'matlab/training' and 'python/training' for matlab and pytorch implementation, repsectively 
+The training codes are provided in folder 'matlab/training' and 'python/training' for matlab and pytorch implementation, respectively 

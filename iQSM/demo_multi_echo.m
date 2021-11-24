@@ -9,13 +9,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set your own data paths and parameters
 deepMRI_root = '~/Downloads/deepMRI'; % where deepMRI git repo is downloaded/cloned to
-checkpoints  = '~/Downloads/iQSM_data/checkpoints'; % where the pretrained iQSM/iQFM network checkpoints are downloaded
+checkpoints  = '~/Downloads/iQSM_data/checkpoints';
 PhasePath    = '~/Downloads/iQSM_data/demo/ph_multi_echo.nii';  % where raw phase data is (in NIFTI format)
 ReconDir     = '~/Downloads/iQSM_data/demo_recon/';  %% where to save reconstruction output
 Eroded_voxel = 0;  %  set number of voxels for brain mask erosion; 0 means no erosion;
 TE           = [0.0032, 0.0065, 0.0098, 0.0131, 0.0164, 0.0197, 0.0231, 0.0264]; % set Echo Times (in second)
 B0           = 3; % set B0 field (in Tesla)
 vox          = [1 1 1]; % set voxel size a.k.a image resolution (in millimeter)
+NetworkType  = 0; % network type: 0 for original iQSM, 1 for networks trained with data fidelity,
+                  % 2 for networks trained with learnable Lap-Layer (15 learnable kernels) and data fidelity;
 
 %% optional data paths to be set, simply comment out if not available
 MaskPath = '~/Downloads/iQSM_data/demo/mask_multi_echo.nii'; %% brain mask; set to one will skip brain masking
@@ -80,6 +82,16 @@ end
 
 [mask, pos] = ZeroPadding(mask, 16);
 
+%% set inference.py path; 
+switch NetworkType
+    case 0
+        InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/Inference.py'];
+    case 1
+        InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/DataFidelityVersion/Inference.py'];
+    case 2
+        InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/LearnableLapLayer/Inference.py'];
+end
+
 for echo_num = 1 : imsize(4)
     
     %% 2. save all information (B0, TE, phase) as .mat file for Network Reconstruction echo by echo
@@ -90,8 +102,8 @@ for echo_num = 1 : imsize(4)
     
     mask_eroded = Save_Input(tmp_phase, mask, tmp_TE, B0, Eroded_voxel, ReconDir);
     
-    %% Call Python script to conduct the reconstruction; use python API to run iQSM on the demo data
-    PythonRecon([deepMRI_root, '/iQSM/PythonCodes/Evaluation/Inference.py'], [ReconDir,'/Network_Input.mat'], ReconDir, checkpoints);
+    % Call Python script to conduct the reconstruction; use python API to run iQSM on the demo data
+    PythonRecon(InferencePath, [ReconDir,'/Network_Input.mat'], ReconDir, checkpoints);
     
     %% load reconstruction data and save as NIFTI
     load([ReconDir,'/iQSM.mat']);
@@ -103,7 +115,7 @@ for echo_num = 1 : imsize(4)
     chi(:,:,:,echo_num) = TE(echo_num) .* pred_chi;
     lfs(:,:,:,echo_num) = TE(echo_num) .* pred_lfs;
     
-    clear tmp_phase; 
+    clear tmp_phase;
 end
 
 
@@ -124,18 +136,18 @@ chi_fitted = echofit(chi, mag, TE);
 lfs_fitted = echofit(lfs, mag, TE);
 
 if interp_flag
-
+    
     nii = make_nii(chi_fitted, vox2);
     save_nii(nii, [ReconDir, 'iQSM_interp_echo_fitted.nii']);
-
+    
     nii = make_nii(lfs_fitted, vox2);
     save_nii(nii, [ReconDir, 'iQFM_interp_echo_fitted.nii']);
-
-
+    
+    
     % back to original resolution if anisotropic
     chi_fitted = imresize3(chi_fitted,imsize(1:3));
     lfs_fitted = imresize3(lfs_fitted,imsize(1:3));
-
+    
 end
 
 nii = make_nii(chi_fitted, vox);
