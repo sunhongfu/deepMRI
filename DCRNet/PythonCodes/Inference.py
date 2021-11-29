@@ -1,32 +1,50 @@
-import torch 
-import torch.nn as nn
-import numpy as np
+import os
+from DCRNet import *
+import time
+import torch
+from argparse import ArgumentParser
 import scipy.io as scio
-import time 
-
+import numpy as np
+import torch.nn as nn
 import sys
-
 sys.path.append('./Model/')
-from DCRNet import * 
- 
+
+parser = ArgumentParser(description='DCRNet')
+
+parser.add_argument('-I', '--InputFile', type=str, default='./',
+                    help='Input file saved using Save_Input_Data_For_DCRNet.m')
+parser.add_argument('-O', '--OutputDirectory', type=str, default='./',
+                    help='output folder for DCRNet reconstruction')
+parser.add_argument('-C', '--CheckpointsDirectory', type=str, default='./',
+                    help='checkpoints folder for DCRNet pretrained networks')
+
+args = parser.parse_args()
+
+InputPath = args.InputFile
+OutputPath = args.OutputDirectory
+CheckpointsPath = args.CheckpointsDirectory
+
 if __name__ == '__main__':
-    with torch.no_grad():     
-        FileNo = 1 ## file identifier
+    with torch.no_grad():
+        FileNo = 1  # file identifier
         SourceDir = '../TestData/'
-        No_subs = 1 ## total number of subjects to be reconstructed 
-         
+        No_subs = 1  # total number of subjects to be reconstructed
+
         print('Network Loading')
-        ## load pre-trained network 
+        # load pre-trained network
         dcrnet = DCRNet(5)
         dcrnet = nn.DataParallel(dcrnet)
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        dcrnet.load_state_dict(torch.load('./DCRNet_AF4.pth'))
+        checkpoint_path = os.path.expanduser(
+            CheckpointsPath) + '/DCRNet_AF4.pth'
+        dcrnet.load_state_dict(torch.load(
+            checkpoint_path, map_location=device))
         dcrnet.to(device)
         dcrnet.eval()
-        
-        ## load subsampling mask; 
+
+        # load subsampling mask;
         matImage = scio.loadmat('../TestData/Real_Mask_Acc4_256_by_128.mat')
-        mask = matImage['mask']  
+        mask = matImage['mask']
         mask = np.array(mask)
         mask = torch.from_numpy(mask)
         mask = mask.float()
@@ -39,8 +57,9 @@ if __name__ == '__main__':
             input_img_files = SourceDir + '/Input_' + str(FileNo) + '_img.mat'
             input_k_files = SourceDir + '/Input_' + str(FileNo) + '_k.mat'
 
-            print('Loading Subsampled Data')   
-            matTest = scio.loadmat(input_img_files, verify_compressed_data_integrity=False)
+            print('Loading Subsampled Data')
+            matTest = scio.loadmat(
+                input_img_files, verify_compressed_data_integrity=False)
             image = matTest['inputs_img']
             image = np.array(image)
 
@@ -52,10 +71,11 @@ if __name__ == '__main__':
 
             image_r = image_r.float()
             image_i = image_i.float()
-  
-            matTest = scio.loadmat(input_k_files, verify_compressed_data_integrity=False)
+
+            matTest = scio.loadmat(
+                input_k_files, verify_compressed_data_integrity=False)
             k0 = matTest['inputs_k']
-            k0= np.array(k0)
+            k0 = np.array(k0)
 
             k0_r = np.real(k0)
             k0_i = np.imag(k0)
@@ -73,60 +93,63 @@ if __name__ == '__main__':
             ini_recons_i = torch.zeros(image_i.size())
 
             print('reconing ...')
-            
-            time_start=time.time()
-            for i in range(0, image_r.size(3)):   ## 0 --- (no_echos - 1)
+
+            time_start = time.time()
+            for i in range(0, image_r.size(3)):  # 0 --- (no_echos - 1)
                 for j in range(0, image_r.size(2)):
-                    # conduct reconstruction in a slice-by-slice manner to save memory; 
+                    # conduct reconstruction in a slice-by-slice manner to save memory;
                     # image-domain inputs
-                    INPUT_r = image_r[:,:,j,i]  ##  256 * 128 
-                    INPUT_i = image_i[:,:,j,i]
+                    INPUT_r = image_r[:, :, j, i]  # 256 * 128
+                    INPUT_i = image_i[:, :, j, i]
 
-                    INPUT_r = torch.unsqueeze(INPUT_r, 0) ##  1 * 256 * 128
-                    INPUT_r = torch.unsqueeze(INPUT_r, 0) ## 1 * 1 * 256 * 128
+                    INPUT_r = torch.unsqueeze(INPUT_r, 0)  # 1 * 256 * 128
+                    INPUT_r = torch.unsqueeze(INPUT_r, 0)  # 1 * 1 * 256 * 128
 
-                    INPUT_i = torch.unsqueeze(INPUT_i, 0)  ## 1 * 256 * 128
-                    INPUT_i = torch.unsqueeze(INPUT_i, 0)  ## 1 * 1 * 256 * 128
+                    INPUT_i = torch.unsqueeze(INPUT_i, 0)  # 1 * 256 * 128
+                    INPUT_i = torch.unsqueeze(INPUT_i, 0)  # 1 * 1 * 256 * 128
 
                     INPUT_r = INPUT_r.to(device)
                     INPUT_i = INPUT_i.to(device)
 
-                    ## k0 for data consisteny
-                    INPUT_k_r = k0_r[:,:,j,i]  ##  256 * 128
-                    INPUT_k_i = k0_i[:,:,j,i]
+                    # k0 for data consisteny
+                    INPUT_k_r = k0_r[:, :, j, i]  # 256 * 128
+                    INPUT_k_i = k0_i[:, :, j, i]
 
-                    INPUT_k_r = torch.unsqueeze(INPUT_k_r, 0) ##  1 * 256 * 256
-                    INPUT_k_r = torch.unsqueeze(INPUT_k_r, 0) ## 1 * 1 * 256 * 256
+                    INPUT_k_r = torch.unsqueeze(INPUT_k_r, 0)  # 1 * 256 * 256
+                    INPUT_k_r = torch.unsqueeze(
+                        INPUT_k_r, 0)  # 1 * 1 * 256 * 256
 
-                    INPUT_k_i = torch.unsqueeze(INPUT_k_i, 0)  ## 1 * 256 * 256
-                    INPUT_k_i = torch.unsqueeze(INPUT_k_i, 0)  ## 1 * 1 * 256 * 256 
+                    INPUT_k_i = torch.unsqueeze(INPUT_k_i, 0)  # 1 * 256 * 256
+                    INPUT_k_i = torch.unsqueeze(
+                        INPUT_k_i, 0)  # 1 * 1 * 256 * 256
 
                     INPUT_k_r = INPUT_k_r.to(device)
                     INPUT_k_i = INPUT_k_i.to(device)
 
                     ################ Network Inference ##################
 
-                    ini_r, ini_i, pred_r, pred_i = dcrnet(INPUT_r, INPUT_i, INPUT_k_r, INPUT_k_i, mask)
+                    ini_r, ini_i, pred_r, pred_i = dcrnet(
+                        INPUT_r, INPUT_i, INPUT_k_r, INPUT_k_i, mask)
 
-                    pred_r = torch.squeeze(pred_r, 0)  ## 1 * 256 * 256
-                    pred_i = torch.squeeze(pred_i, 0)  ## 1 * 256 * 256
+                    pred_r = torch.squeeze(pred_r, 0)  # 1 * 256 * 256
+                    pred_i = torch.squeeze(pred_i, 0)  # 1 * 256 * 256
 
-                    pred_r = torch.squeeze(pred_r, 0)  ##  256 * 256
-                    pred_i = torch.squeeze(pred_i, 0)  ##  256 * 256
-                    
-                    ini_r = torch.squeeze(ini_r, 0)  ## 1 * 256 * 256
-                    ini_i = torch.squeeze(ini_i, 0)  ## 1 * 256 * 256
+                    pred_r = torch.squeeze(pred_r, 0)  # 256 * 256
+                    pred_i = torch.squeeze(pred_i, 0)  # 256 * 256
 
-                    ini_r = torch.squeeze(ini_r, 0)  ##  256 * 256
-                    ini_i = torch.squeeze(ini_i, 0)  ##  256 * 256
+                    ini_r = torch.squeeze(ini_r, 0)  # 1 * 256 * 256
+                    ini_i = torch.squeeze(ini_i, 0)  # 1 * 256 * 256
 
-                    ini_recons_r[:,:,j,i] = ini_r
-                    ini_recons_i[:,:,j,i] = ini_i
-                    
-                    recons_r[:,:,j,i] = pred_r
-                    recons_i[:,:,j,i] = pred_i
+                    ini_r = torch.squeeze(ini_r, 0)  # 256 * 256
+                    ini_i = torch.squeeze(ini_i, 0)  # 256 * 256
 
-            time_end =time.time()
+                    ini_recons_r[:, :, j, i] = ini_r
+                    ini_recons_i[:, :, j, i] = ini_i
+
+                    recons_r[:, :, j, i] = pred_r
+                    recons_i[:, :, j, i] = pred_i
+
+            time_end = time.time()
             print('Time Used:' + str(time_end - time_start))
 
             recons_r = recons_r.to('cpu')
@@ -141,14 +164,14 @@ if __name__ == '__main__':
 
             print('Saving results')
             path = SourceDir + 'rec_Input_' + str(FileNo) + '_real.mat'
-            scio.savemat(path, {'recons_r':recons_r})
+            scio.savemat(path, {'recons_r': recons_r})
 
             path = SourceDir + 'rec_Input_' + str(FileNo) + '_imag.mat'
-            scio.savemat(path, {'recons_i':recons_i})
+            scio.savemat(path, {'recons_i': recons_i})
 
             path = SourceDir + 'ini_rec_Input_' + str(FileNo) + '_real.mat'
-            scio.savemat(path, {'ini_recons_r':ini_recons_r})
+            scio.savemat(path, {'ini_recons_r': ini_recons_r})
 
             path = SourceDir + 'ini_rec_Input_' + str(FileNo) + '_imag.mat'
-            scio.savemat(path, {'ini_recons_i':ini_recons_i})
+            scio.savemat(path, {'ini_recons_i': ini_recons_i})
             print('Reconstruction Ends, Going to MatlabCode Folder for postprocessing')
