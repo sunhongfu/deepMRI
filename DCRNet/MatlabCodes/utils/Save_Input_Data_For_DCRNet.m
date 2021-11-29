@@ -73,7 +73,7 @@ for i = 1 : ll(4)
     end
 end
 
-save([Dir, '/Input_', num2str(FileNo),'_img.mat'], 'inputs_img');
-save([Dir, '/Input_', num2str(FileNo),'_k.mat'], 'inputs_k');
+save([Dir, '/Input_', num2str(FileNo),'_img.mat'], 'inputs_img','-v7.3');
+save([Dir, '/Input_', num2str(FileNo),'_k.mat'], 'inputs_k','-v7.3');
 end
 
