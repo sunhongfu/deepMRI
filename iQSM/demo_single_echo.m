@@ -5,6 +5,22 @@
 % (1) download or clone github repo for deepMRI: https://github.com/sunhongfu/deepMRI
 % (2) download demo data and checkpoints here: https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0
 
+clear 
+clc 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% data preparation guide: 
+
+% 1. phase evolution type:
+% The relationship between the phase data and filed pertubation (delta_B) 
+% is assumed to satisfy the following equation: 
+% "phase = -delta_B * gamma * TE" 
+% Therefore, if your phase data is in the format of "phase = delta_B * gamma * TE;" 
+% it will have to be preprocessed by multiplication by -1; 
+
+% 2. For Ultra-high resolutin data:
+% it is recommended that the phase data of ultra-high resolution (higher
+% than 0.7 mm) should be interpoloated into 1 mm for better reconstruction results.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set your own data paths and parameters
@@ -13,11 +29,11 @@ checkpoints  = '~/Downloads/iQSM_data/checkpoints';
 PhasePath    = '~/Downloads/iQSM_data/demo/ph_single_echo.nii';  % where raw phase data is (in NIFTI format)
 ReconDir     = '~/Downloads/iQSM_data/demo_recon';  %% where to save reconstruction output
 Eroded_voxel = 3;  %  set number of voxels for brain mask erosion; 0 means no erosion
-TE           = 20e-3; % set Echo Time (in second)
+TE           = 20e-3; % set Echo Time (in secon)
 B0           = 3; % set B0 field (in Tesla)
 vox          = [1 1 1]; % set voxel size a.k.a image resolution (in millimeter)
-NetworkType  = 0; %% network type: 0 for original iQSM, 1 for networks trained with data fidelity, 
-                  % 2 for networks trained with learnable Lap-Layer (15 learnable kernels) and data fidelity;  
+NetworkType  = 0; % network type: 0 for original iQSM, 1 for networks trained with data fidelity,
+                  % 2 for networks trained with learnable Lap-Layer (15 learnable kernels) and data fidelity;
 
 %% optional mask path to be set, simply comment out if not available
 MaskPath = '~/Downloads/iQSM_data/demo/mask_single_echo.nii'; %% brain mask; set to one will skip brain masking
@@ -73,10 +89,13 @@ mask_eroded = Save_Input(phase, mask, TE, B0, Eroded_voxel, ReconDir);
 switch NetworkType 
     case 0
         InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/Inference.py']; 
+        checkpoints = [checkpoints, '/iQSM_and_iQFM'];
     case 1
         InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/DataFidelityVersion/Inference.py'];
+        checkpoints = [checkpoints, '/iQSM_iQFM_DataFidelity']; 
     case 2
         InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/LearnableLapLayer/Inference.py'];
+        checkpoints = [checkpoints, '/iQSM_learnableKernels']; 
 end 
 
 PythonRecon(InferencePath, [ReconDir,'/Network_Input.mat'], ReconDir, checkpoints);

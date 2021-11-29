@@ -6,9 +6,9 @@ import torch.nn.functional as F
 import scipy.io as scio
 import numpy as np 
 
-class LapLayer(nn.Module):
+class LoTLayer(nn.Module):
     def __init__(self, conv_x):
-        super(LapLayer, self).__init__()
+        super(LoTLayer, self).__init__()
         self.conv_x = nn.Parameter(conv_x,requires_grad=False)
 
     def forward(self, phi, mask, TE, B0):

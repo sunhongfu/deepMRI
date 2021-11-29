@@ -5,6 +5,22 @@
 % (1) download or clone github repo for deepMRI: https://github.com/sunhongfu/deepMRI
 % (2) download demo data and checkpoints here: https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0
 
+clear 
+clc
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% data preparation guide: 
+
+% 1. phase evolution type:
+% The relationship between the phase data and filed pertubation (delta_B) 
+% is assumed to satisfy the following equation: 
+% "phase = -delta_B * gamma * TE" 
+% Therefore, if your phase data is in the format of "phase = delta_B * gamma * TE;" 
+% it will have to be preprocessed by multiplication by -1; 
+
+% 2. For Ultra-high resolutin data:
+% it is recommended that the phase data of ultra-high resolution (higher
+% than 0.7 mm) should be interpoloated into 1 mm for better reconstruction results.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set your own data paths and parameters
@@ -83,14 +99,17 @@ end
 [mask, pos] = ZeroPadding(mask, 16);
 
 %% set inference.py path; 
-switch NetworkType
+switch NetworkType 
     case 0
-        InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/Inference.py'];
+        InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/Inference.py']; 
+        checkpoints = [checkpoints, '/iQSM_and_iQFM'];
     case 1
         InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/DataFidelityVersion/Inference.py'];
+        checkpoints = [checkpoints, '/iQSM_iQFM_DataFidelity']; 
     case 2
         InferencePath = [deepMRI_root, '/iQSM/PythonCodes/Evaluation/LearnableLapLayer/Inference.py'];
-end
+        checkpoints = [checkpoints, '/iQSM_learnableKernels']; 
+end 
 
 for echo_num = 1 : imsize(4)
     

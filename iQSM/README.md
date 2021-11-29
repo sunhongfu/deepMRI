@@ -4,6 +4,8 @@
 
 * This code was built and tested on Centos 7.8 with Nvdia Tesla V100 and macos12.0.1/ubuntu 19.10 with GTX 1060.
 
+- It is recommended that the phase data of ultra-high resolution (higher than 0.7 mm) should be interpoloated into 1 mm for better reconstruction results.  
+
 # Content
 
 - [ Overview](#head1)

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import scipy.io as scio
-from Lap_Unet import *
+from LoT_Unet import *
 import time
 from argparse import ArgumentParser
 import os
@@ -28,7 +28,7 @@ if __name__ == '__main__':
         print('Network Loading')
 
         # load trained network
-        #LGOP =  scio.loadmat("3D_Laplacian_Operator.mat", verify_compressed_data_integrity=False)
+        #LGOP =  scio.loadmat("3D_LoTlacian_Operator.mat", verify_compressed_data_integrity=False)
         #conv_op = LGOP['LM']
         conv_op = [[[1/13,  3/26,  1/13],
                     [3/26,  3/13,  3/26],
@@ -49,41 +49,41 @@ if __name__ == '__main__':
 
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-        Lap_Layer_iQSM = LapLayer(conv_op)
+        LoT_Layer_iQSM = LoTLayer(conv_op)
 
-        Lap_Layer_iQSM = nn.DataParallel(Lap_Layer_iQSM)
+        LoT_Layer_iQSM = nn.DataParallel(LoT_Layer_iQSM)
 
         checkpoint_path = os.path.expanduser(
-            CheckpointsPath) + '/iQSM_LapLayerPart_LearnableLapLayer.pth'
-        Lap_Layer_iQSM.load_state_dict(torch.load(
+            CheckpointsPath) + '/iQSM_LoTPart_LearnableLoTLayer.pth'
+        LoT_Layer_iQSM.load_state_dict(torch.load(
             checkpoint_path, map_location=device))
 
-        Lap_Layer_iQFM = LapLayer(conv_op)
+        LoT_Layer_iQFM = LoTLayer(conv_op)
 
-        Lap_Layer_iQFM = nn.DataParallel(Lap_Layer_iQFM)
+        LoT_Layer_iQFM = nn.DataParallel(LoT_Layer_iQFM)
 
         checkpoint_path = os.path.expanduser(
-            CheckpointsPath) + '/iQFM_LapLayerPart_LearnableLapLayer.pth'
-        Lap_Layer_iQFM.load_state_dict(torch.load(
+            CheckpointsPath) + '/iQFM_LoTPart_LearnableLoTLayer.pth'
+        LoT_Layer_iQFM.load_state_dict(torch.load(
             checkpoint_path, map_location=device))
 
         Unet_chi = Unet(4, 16, 1)
         Unet_chi = nn.DataParallel(Unet_chi)
 
         checkpoint_path = os.path.expanduser(
-            CheckpointsPath) + '/iQSM_Unet_Part_LearnableLapLayer.pth'
+            CheckpointsPath) + '/iQSM_Unet_Part_LearnableLoTLayer.pth'
         Unet_chi.load_state_dict(torch.load(
             checkpoint_path, map_location=device))
 
         Unet_lfs = Unet(4, 16, 1)
         Unet_lfs = nn.DataParallel(Unet_lfs)
         checkpoint_path = os.path.expanduser(
-            CheckpointsPath) + '/iQFM_Unet_Part_LearnableLapLayer.pth'
+            CheckpointsPath) + '/iQFM_Unet_Part_LearnableLoTLayer.pth'
         Unet_lfs.load_state_dict(torch.load(
             checkpoint_path, map_location=device))
 
-        iQSM = Lap_Unet(Lap_Layer_iQSM, Unet_chi)
-        iQFM = Lap_Unet(Lap_Layer_iQFM, Unet_lfs)
+        iQSM = LoT_Unet(LoT_Layer_iQSM, Unet_chi)
+        iQFM = LoT_Unet(LoT_Layer_iQFM, Unet_lfs)
 
         iQSM.to(device)
         iQFM.to(device)

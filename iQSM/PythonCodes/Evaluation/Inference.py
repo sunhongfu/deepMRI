@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import numpy as np
 import scipy.io as scio
-from Lap_Unet import *
+from LoT_Unet import *
 import time
 from argparse import ArgumentParser
 import os
@@ -28,7 +28,7 @@ if __name__ == '__main__':
         print('Network Loading')
 
         # load trained network
-        #LGOP =  scio.loadmat("3D_Laplacian_Operator.mat", verify_compressed_data_integrity=False)
+        #LGOP =  scio.loadmat("3D_LoTlacian_Operator.mat", verify_compressed_data_integrity=False)
         #conv_op = LGOP['LM']
         conv_op = [[[1/13,  3/26,  1/13],
                     [3/26,  3/13,  3/26],
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         conv_op = torch.unsqueeze(conv_op, 0)
         conv_op = torch.unsqueeze(conv_op, 0)
 
-        Lap_Layer = LapLayer(conv_op)
+        LoT_Layer = LoTLayer(conv_op)
 
         Unet_chi = Unet(4, 1, 1)
         Unet_chi = nn.DataParallel(Unet_chi)
@@ -64,8 +64,8 @@ if __name__ == '__main__':
         Unet_lfs.load_state_dict(torch.load(
             checkpoint_path, map_location=device))
 
-        iQSM = Lap_Unet(Lap_Layer, Unet_chi)
-        iQFM = Lap_Unet(Lap_Layer, Unet_lfs)
+        iQSM = LoT_Unet(LoT_Layer, Unet_chi)
+        iQFM = LoT_Unet(LoT_Layer, Unet_lfs)
 
         iQSM.to(device)
         iQFM.to(device)
