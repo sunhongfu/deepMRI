@@ -1,38 +1,40 @@
-function  Amp_Nor_factors = Save_Input_Data_For_DCRNet(k, mask, FileNo, Dir)
+function  Amp_Nor_factors = Save_Input_Data_For_DCRNet(k, mask, Dir, SaveKdata)
 %
-% preprocessing codes for the 3D k-space data; this programme will save the 
+% preprocessing codes for the 3D k-space data; this programme will save the
 % input data to appropriate format (.mat) for DCRNet reconstruction;
 %
 % inputs variables descriptions:
-% 1) k: the fully-sampled  k-space data with an image size: (Nx * Ny * Nz) * NE,
-%    where NE is the number of echos, and Nx, Ny, Nz are the Matrix sizes 
+% 1) k: the k-space data with an image size: (Nx * Ny * Nz) * NE,
+%    where NE is the number of echos, and Nx, Ny, Nz are the Matrix sizes
 %    (FOV size ./ resolution);
 %
 % 2) mask: k-space subsampling mask; please refer to "Gen_Sampling_Mask.m"
-%    about how it is generated; 
-% 
-% 3) FileNo: File identifier for the output files. 
+%    about how it is generated;
 %
-% 4) Dir: directory for the output files. Default: '../TestData/'
+%
+% 3) Dir: directory for the output files. Default: '../TestData/'
+%
+% 4) save kspace data or not?
 %
 % output descriptions:
 % 1) Amp_Nor_factors: amplitude normalization factors, which will be used
-%    for postprocessing after the network reconstruciton, to recover 
-%    the magnitude amplitudes of different TEs; 
+%    for postprocessing after the network reconstruciton, to recover
+%    the magnitude amplitudes of different TEs;
 %
-% 2) two '.mat' files will be saved as network inputs:
-%    Input_{FileNo}_img.mat (image-domain subsampled data) and
-%    Input_{FileNo}_k.mat (undersampled kspace data); 
-% 
-% example usage: 
-% Save_Input_Data_For_DCRNet(k_full, SamplingMask, 1, '../TestData/')
+% 2) two '.mat' files will be saved as network inputs for image domain
+% and kspace domain data, respectively.
+%
+% example usage:
+% Save_Input_Data_For_DCRNet(k_full, SamplingMask, '../TestData/')
 %
 
 if ~ exist('Dir','var') || isempty(Dir)
-    Dir = '../TestData/'; 
+    Dir = '../TestData/';
 end
 
-%%%k = permute(k, [1, 3, 2, 4]); % prepare to conduct subsampling in the ky-kz (coronal) plane
+if ~ exist('SaveKdata','var') || isempty(SaveKdata)
+    SaveKdata = true;
+end
 
 ll = size(k);
 
@@ -40,7 +42,7 @@ if length(ll) == 3
     ll = [ll, 1];
 end
 
-Amp_Nor_factors = zeros(ll(4)); 
+Amp_Nor_factors = zeros(ll(4));
 inputs_img = zeros(ll);% image-domain subsampled data (zero-filling reconstructions)
 inputs_k = zeros(ll); % undersampled kspace data
 
@@ -73,7 +75,13 @@ for i = 1 : ll(4)
     end
 end
 
-save([Dir, '/Input_', num2str(FileNo),'_img.mat'], 'inputs_img','-v7.3');
-save([Dir, '/Input_', num2str(FileNo),'_k.mat'], 'inputs_k','-v7.3');
+%% saving data 
+
+if SaveKdata
+    save([Dir, '/NetworkInput.mat'],'inputs_img','inputs_k', 'mask', '-v7.3');
+else 
+    save([Dir, '/NetworkInput.mat'],'inputs_img', '-v7.3');
+end
+
 end
 
