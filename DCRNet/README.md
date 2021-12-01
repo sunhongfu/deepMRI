@@ -56,49 +56,30 @@ Fig. 2: The architecture of the proposed DCRNet, which is developed from a deep 
             conda activate Pytorch 
             conda install pytorch cudatoolkit=10.2 -c pytorch-nightly
             conda install scipy
+            pip install mat73
         ```
-3. Now you are ready for MRI magnitude and phase reconstructions, however, for QSM reconstruction, do not forget to install Hongfu Sun's QSM toolbox and FMRIB Software Library.   
+3. Open a new terminal, and run the following command for single- and multi-echo MRI data, respectively; 
 
-4. Download the demo data provided by the author (https://www.dropbox.com/sh/p9k9rq8zux2bkzq/AADSgw3bECQ9o1dPpIoE5b85a?dl=0), then unzip and move the file ('kspace_example.mat') into folder './TestData/'. 
-
-5. Open a new terminal, and run the following command, then you will find the corresponding MRI and QSM reconstructions in the folder 'MRI_QSM_recon'
 ```
-    cd ~/DCRNet
     conda activate Pytorch
-    matlab -nodisplay -r Demo_on_ExampleData
+    matlab -nodisplay -r demo_single_channel
 ```
 
 ## <span id="head7"> The Whole Reconstruction Pipeline (on your own data) </span>
-1. Preprocess your test data, using 'kSpaceSubsampling.m' provided in the folder './MatlabCodes/'. This function takes two variables as its input, i.e., the path to your k-space data file, and a designated file indentifier 'FileNo'; 
-```matlab 
-    matlab -nodisplay -r "kSpaceSubSampling(datapath, FileNo)"
-```
-
-2. Modify the Inference code (in folder './PythonCodes/')
-    1. Open './PythonCodes/Inference.py' using your own IDE
-    2. go to line 14, set variable 'File_No' to be your file identifier (e.g., 2, 3, 4 ...)
-    4. save it as your own inference script file. 
-
-3. Run the modified code directly using python 
-
-```python
-    python your_own_inference_script.py  
-```
-
-or using the matlab codes provided in folder './MatlabCodes/'
-
-```matlab
-    matlab -nodispaly -r "PythonRecon('../PythonCodes/your_own_inference_script.py')"
-```
-
-4. Run the postprocessing codes to obtain MRI magnitude and phase images from the network outputs; 
-```matlab
-    matlab -nodisplay -r "MRI_PhaseRecon(FileNo)"
-``` 
-
-5. Run the QSM reconstruction in folder './MatlabCodes/':
-```matlab
-    matlab -nodispaly -r QSM_Recon_From_Phase
+1. For single-channel data:
+   Replace the parameters in the "demo_single_channel.m" (line 10-20) with yours.
+   then run the matlab code
+   ```
+       conda activate Pytorch
+       matlab -nodisplay -r demo_single_channel
+   ```
+2. For multi-channel data:
+   Replace the parameters in the "demo_multi_channel.m" (line 10-20) with yours.
+   then run the matlab code
+   ```
+       conda activate Pytorch
+       matlab -nodisplay -r demo_multi_channel
+   ```
 ```
 
 ## <span id="head8"> Train new DCRNet </span>
