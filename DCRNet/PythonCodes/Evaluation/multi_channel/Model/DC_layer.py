@@ -8,10 +8,10 @@ import numpy as np
 
 ## Fourier Transforms
 def FFT2D(x):
-    return FFT.fft2(FFT.fftshift(x, dim=(-2, -1)))
+    return FFT.fftshift(FFT.fft2(FFT.fftshift(x, dim=(-2, -1))), dim=(-2, -1))
 
 def IFFT2D(x):
-    return FFT.ifftshift(FFT.ifft2(x), dim=(-2, -1))
+    return FFT.ifftshift(FFT.ifft2(FFT.ifftshift(x,dim=(-2, -1))), dim=(-2, -1))
 
 
 ## data consistency in kspace; 
