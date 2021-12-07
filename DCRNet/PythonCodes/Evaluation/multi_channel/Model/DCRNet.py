@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn 
 import torch.nn.functional as F
-from DC_layer import * 
 
 class DCRNet(nn.Module):
     def __init__(self, EncodingDepth = 5):
@@ -19,9 +18,9 @@ class DCRNet(nn.Module):
 
         self.FinalConv =  CConv2d(initial_num_layers, No_channels)
 
-        self.dc = DataConsistencyInKspace()
+        ## self.dc = DataConsistencyInKspace()
 
-    def forward(self, x_r, x_i, k0_r = 0, k0_i = 0, mask = 0):
+    def forward(self, x_r, x_i):
         INPUT_r = x_r
         INPUT_i = x_i
         x_r, x_i = self.init1(x_r, x_i)
