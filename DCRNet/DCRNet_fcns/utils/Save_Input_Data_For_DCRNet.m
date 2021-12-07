@@ -57,11 +57,11 @@ for i = 1 : ll(4)
     k_sub = k_full .* mask;
     
     % zero-filling reconstructions (image-domain inputs)
-    img_tmp = fftn(fftshift(k_sub));
+    img_tmp = fftshift(fftn(fftshift(k_sub)));
     
     % one dimensional fft on the kx (read out direction);
     % k-space data consistency inputs
-    k_sub = fft(fftshift(k_sub, 3), [], 3);
+    k_sub = fftshift(fft(fftshift(k_sub, 3), [], 3), 3);
     
     % slicing into 2D slices along kx direction;
     for j = 1 : ll(3)

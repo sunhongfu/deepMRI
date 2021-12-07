@@ -8,22 +8,22 @@
 clear
 clc
 
-% It is assumed that the kspace is saved as the size of ky * kz * kx
-% echo_numbers, where kx is the fully sampled readout direction. For our
-% pretrained networks, the subsampling is supposed to happen in the coronal plane.
+% It is assumed that the kspace is saved as the size of ky * kz * kx [* echo_numbers], where kx is the fully sampled readout direction. 
+% For our pretrained networks, the subsampling is supposed to happen in the coronal plane.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set your own data paths and parameters
 deepMRI_root = '~/Downloads/deepMRI'; % where deepMRI git repo is downloaded/cloned to;
 checkpoints  = '~/Downloads/DCRNet_data/checkpoints'; % where the network is stored;
-ksp_path     = '~/Downloads/DCRNet_data/demo/kspace_example.mat';  % where the subsampled kspace data is (in ".mat" format)
+ksp_path     = '~/Downloads/DCRNet_data/demo/kspace_sub_AF4.mat';  % where the subsampled kspace data is (in ".mat" format)
 ReconDir     = '~/Downloads/DCRNet_data/demo_recon';  %% where to save reconstruction output
-MaskPath     = '~/Downloads/DCRNet_data/demo/Real_Mask_Acc4_256_by_128.mat'; %% subsampling mask; you can generate
-%yours with the function "Gen_Sampling_Mask" in "MatlabCode" folder
 vox          = [1 1 1]; % voxel size;
 AF           = 4; % accelerating factors. 4 or 8; set it consistent with your network;
-dc_weights   = 1;  % data consistency weights subject to [0, 1]. 0 means no data consistency;
-% rec_dc(k) = (1 - dc_weights) * rec(k) * mask + dc_weights * k_sub + (1 - mask) * rec(k);
+dc_weights   = 1; % data consistency weights subject to [0, 1]. 0 means no data consistency;
+                  % rec_dc(k) = (1 - dc_weights) * rec(k) * mask + dc_weights * k_sub + (1 - mask) * rec(k);
+
+% optional inputs
+MaskPath     = '~/Downloads/DCRNet_data/demo/mask_sub_AF4.mat'; %% subsampling mask;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% add MATLAB paths
@@ -40,13 +40,13 @@ else
     ksp = inp.(f{1});  % load kspace data;
 end
 
+[n_ky, n_kz, n_kx, n_echo]  = size(ksp);
+
 % load mask if available
 if ~ exist('MaskPath','var') || isempty(MaskPath)
     disp('Please specify the subsampling mask path!')
-    tmp = ksp(:,:,1);
-    mask = tmp > 1e-9;
+    mask = abs(ksp(:,:,round(n_kx/2)),1) > 1e-9;
 else
-    % 3D laplacian kernel
     inp = load(MaskPath);
     f = fields(inp);
     mask = inp.(f{1}); % load mask data;
@@ -58,18 +58,17 @@ if ~exist(ReconDir, 'dir')
 end
 
 %% reconstruction setting;
+InferencePath = [deepMRI_root, '/DCRNet/PythonCodes/Evaluation/single_channel/Inference.py'];
 switch AF
-    case 4
-        InferencePath = [deepMRI_root, '/DCRNet/PythonCodes/Evaluation/single_channel/Inference.py'];
+    case 4     
         network_path = [checkpoints, '/DCRNet_AF4.pth'];
     case 8
-        InferencePath = [deepMRI_root, '/DCRNet/PythonCodes/Evaluation/single_channel/Inference.py'];
         network_path = [checkpoints, '/DCRNet_AF8.pth'];
 end
 
-imsize  = size(ksp);
 
-for echo_num = 1 : imsize(4)
+
+for echo_num = 1 : n_echo
     
     temp_k = ksp(:,:,:,echo_num);
     

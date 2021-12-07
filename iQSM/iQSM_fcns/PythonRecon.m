@@ -19,7 +19,7 @@ disp('Calling Python for iQSM reconstruction');
 cd(codeFolder); 
 
 CodeFile = [codeName codeExt]; 
-exe_command = sprintf("python -u %s -I %s -O %s -C %s", CodeFile, InputPath, OutPath, CheckpointsPath);
+exe_command = sprintf("python -u '%s' -I '%s' -O '%s' -C '%s'", CodeFile, InputPath, OutPath, CheckpointsPath);
 
 system(exe_command); % !python -u Inference.py
 cd(curDir)

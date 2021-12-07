@@ -12,18 +12,18 @@ if ispc
     ConfigPython;  %% configure pytorh for matlab terminal
 end
 
-disp('Calling Python for iQSM reconstruction'); 
+disp('Calling Python for DCRNet reconstruction'); 
 
 %% cd ../PythonCodes/
 [codeFolder, codeName, codeExt] = fileparts(PyFile); 
 cd(codeFolder); 
 
 CodeFile = [codeName codeExt]; 
-exe_command = sprintf("python -u %s -I %s -O %s -C %s", CodeFile, InputPath, OutPath, CheckpointsPath);
+exe_command = sprintf("python -u '%s' -I '%s' -O '%s' -C '%s'", CodeFile, InputPath, OutPath, CheckpointsPath);
 
 system(exe_command); % !python -u Inference.py
 cd(curDir)
 
-disp('iQSM Reconstruction Finished');
+disp('DCRNet Reconstruction Finished');
 end
 
