@@ -9,14 +9,14 @@ clear
 clc
 
 % It is assumed that the kspace is saved as the size of ky * kz * kx *
-% channel_numbers * echo_numbers, where kx is the fully sampled readout direction. For our
+% channel_numbers [* echo_numbers], where kx is the fully sampled readout direction. For our
 % pretrained networks, the subsampling is supposed to be implemented in the coronal plane.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Set your own data paths and parameters
 deepMRI_root = '~/Downloads/deepMRI'; % where deepMRI git repo is downloaded/cloned to;
 checkpoints  = '~/Downloads/DCRNet_data/checkpoints'; % where the network is stored;
-ksp_path     = '~/Downloads/DCRNet_data/demo/kspace_multi_channel.mat';  % where the subsampled kspace data is (in ".mat" format)
+ksp_path     = '~/Downloads/DCRNet_data/demo/kspace_multi_channel_AF4.mat';  % where the subsampled kspace data is (in ".mat" format)
 ReconDir     = '~/Downloads/DCRNet_data/demo_recon';  %% where to save reconstruction output
 MaskPath     = '~/Downloads/DCRNet_data/demo/Real_Mask_Acc4_256_by_128.mat'; %% subsampling mask; you can generate
 %yours with the function "Gen_Sampling_Mask" in "MatlabCode" folder
