@@ -56,7 +56,7 @@ for ns = 1 : imsize(3)  % number of slices;
         
         k_rec = k_rec / max(abs(k_rec(:)));
         k_rec = k_rec * max(abs(temp(:)));
-        k_dc = factor * temp + (1 - mask) .* k_rec + (1 - factor) * k_rec .* mask; 
+        k_dc = factor * mask .* temp + (1 - mask) .* k_rec + (1 - factor) * k_rec .* mask; 
         %% store the results after data consistency
         data = fft2(fftshift(k_dc));
         %%data = data ./ max(abs(data(:))); normalization not necessary;
