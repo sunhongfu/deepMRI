@@ -40,10 +40,20 @@ for ns = 1 : imsize(3)  % number of slices;
     
     tmp_rec_MC_dc = zeros(size(tmp_img_MC)); 
     
+    mask(imsize(1) / 2 - 10, imsize(1) / 2 + 10, imsize(2) / 2 - 8, imsize(2) / 2 + 8) = 0; % keep the low frequency of the DCRNet recon; 
+    
     for i = 1 : imsize(4)  % number of receivers; 
         temp4 = tmp_img_MC(:,:,i); 
         temp = tmp_k_sub(:,:,i); 
         k_rec = ifftshift(ifft2(temp4));
+        
+        calib1 = mask .* k_rec;
+        calib2 = mask .* temp;
+        
+        p = polyfit(abs(calib1),abs(calib2),1);  % ksp calibration for data consistency; 
+        
+        k_rec = p(1) * k_rec;
+        
         k_rec = k_rec / max(abs(k_rec(:)));
         k_rec = k_rec * max(abs(temp(:)));
         k_dc = factor * temp + (1 - mask) .* k_rec + (1 - factor) * k_rec .* mask; 
