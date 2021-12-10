@@ -1,3 +1,6 @@
+import sys
+sys.path.append('./Model/')
+from DCRNet import *
 import os
 import time
 import torch
@@ -6,10 +9,7 @@ import scipy.io as scio
 import numpy as np
 import torch.nn as nn
 import mat73
-import sys
-sys.path.append('./Model/')
 
-from DCRNet import *
 
 parser = ArgumentParser(description='DCRNet')
 
@@ -54,17 +54,17 @@ if __name__ == '__main__':
         image_r = image_r.float()
         image_i = image_i.float()
 
-        k0 = matImage['inputs_k']
-        k0 = np.array(k0)
+        # k0 = matImage['inputs_k']
+        # k0 = np.array(k0)
 
-        k0_r = np.real(k0)
-        k0_i = np.imag(k0)
+        # k0_r = np.real(k0)
+        # k0_i = np.imag(k0)
 
-        k0_r = torch.from_numpy(k0_r)
-        k0_i = torch.from_numpy(k0_i)
+        # k0_r = torch.from_numpy(k0_r)
+        # k0_i = torch.from_numpy(k0_i)
 
-        k0_r = k0_r.float()
-        k0_i = k0_i.float()
+        # k0_r = k0_r.float()
+        # k0_i = k0_i.float()
 
         recons_r = torch.zeros(image_r.size())
         recons_i = torch.zeros(image_i.size())
@@ -114,10 +114,10 @@ if __name__ == '__main__':
         recons_i = recons_i.numpy()
 
         print('Saving results')
-        path = OutputPath + '/rec_real.mat'
+        path = os.path.expanduser(OutputPath) + '/rec_real.mat'
         scio.savemat(path, {'recons_r': recons_r})
 
-        path = OutputPath + '/rec_imag.mat'
+        path = os.path.expanduser(OutputPath) + '/rec_imag.mat'
         scio.savemat(path, {'recons_i': recons_i})
 
         print('ends')

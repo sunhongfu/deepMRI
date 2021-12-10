@@ -25,14 +25,14 @@ rec_dc_combined = zeros(size(recs));  %% size: 256 * 128 * 256 * 1;
 
 rec_dc_mc = zeros(imsize); %% size: 256 * 128 * 256 * 32;
 
-k_sub = fft(fftshift(k_sub, 3), [], 3);  % size: 256 * 128 * 512 * 32; 1D FFT along readout direction before slicing; 
+k_sub = fftshift(fft(fftshift(k_sub, 3), [], 3), 3);  % size: 256 * 128 * 512 * 32; 1D FFT along readout direction before slicing; 
 
-k_sub = k_sub(:,:, imsize(3) / 4 + 1: 3 * imsize(3) / 4, :);  %% only recon the middle slices; % 256 * 128 * 256;
+% k_sub = k_sub(:,:, imsize(3) / 4 + 1: 3 * imsize(3) / 4, :);  %% only recon the middle slices; % 256 * 128 * 256;
 
 for ns = 1 : imsize(3)  % number of slices; 
     tmp_img = recs(:,:,ns);
     
-    S = ESPIRiT(squeeze(coil_sens(:,:,ns, :)), ones(imszie(1), imszie(2)));   %% for espirit combination; 
+    S = ESPIRiT(squeeze(coil_sens(:,:,ns, :)), ones(imsize(1), imsize(2)));   %% for espirit combination; 
     
     tmp_img_MC = tmp_img .* squeeze(coil_sens(:,:,ns, :));  % 256 * 128 * 32;
     
@@ -43,12 +43,12 @@ for ns = 1 : imsize(3)  % number of slices;
     for i = 1 : imsize(4)  % number of receivers; 
         temp4 = tmp_img_MC(:,:,i); 
         temp = tmp_k_sub(:,:,i); 
-        k_rec = ifftshift(ifft2(temp4));
+        k_rec = ifftshift(ifft2(ifftshift(temp4)));
         k_rec = k_rec / max(abs(k_rec(:)));
         k_rec = k_rec * max(abs(temp(:)));
         k_dc = factor * temp + (1 - mask) .* k_rec + (1 - factor) * k_rec .* mask; 
         %% store the results after data consistency
-        data = fft2(fftshift(k_dc));
+        data = fftshift(fft2(fftshift(k_dc)));
         %%data = data ./ max(abs(data(:))); normalization not necessary;
         tmp_rec_MC_dc(:,:,i) = data; 
     end
@@ -59,7 +59,7 @@ for ns = 1 : imsize(3)  % number of slices;
     
     rec_dc_mc(:,:,ns,:) = tmp_rec_MC_dc;
     
-    disp(['Recon for No.', num2str(ns), ' echo ends'])
+    disp(['Recon for No.', num2str(ns), ' slice ends'])
 end
 
 end
