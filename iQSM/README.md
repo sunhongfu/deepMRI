@@ -23,7 +23,7 @@
 ## <span id="head2">(1) Overall Framework </span>
 
 ![Whole Framework](https://www.dropbox.com/s/7bxkyu1utxux76k/Figs_1.png?raw=1)
-Fig. 1: Overview of iQFM and iQSM framework using the proposed Lap-Unet architecture, composed of a tailored Lap-Layer and a 3D residual Unet.
+Fig. 1: Overview of iQFM and iQSM framework using the proposed LoT-Unet architecture, composed of a tailored Lap-Layer and a 3D residual Unet.
 
 ## <span id="head3">(2) Representative Results </span>
 
@@ -62,7 +62,7 @@ Fig. 2: Comparison of different QSM methods on three ICH patients. Susceptibilit
 
     pytorch codes:
         - Inference.py ---- Pytorch API for iQSM and iQFM reconstruction
-        - Unet.py and Unet_blocks.py ---- implementation of Lap-Unet
+        - Unet.py, Unet_blocks.py, and LoT_Unet.py ---- implementation of LoT-Unet
         - TrainingDataLoad.py ---- data loader during training
         - TrainiQSM.py  ---- network training: iQSM
         - TrainiQFM.py  ---- network training: iQFM

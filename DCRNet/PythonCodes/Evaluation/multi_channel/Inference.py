@@ -54,18 +54,6 @@ if __name__ == '__main__':
         image_r = image_r.float()
         image_i = image_i.float()
 
-        # k0 = matImage['inputs_k']
-        # k0 = np.array(k0)
-
-        # k0_r = np.real(k0)
-        # k0_i = np.imag(k0)
-
-        # k0_r = torch.from_numpy(k0_r)
-        # k0_i = torch.from_numpy(k0_i)
-
-        # k0_r = k0_r.float()
-        # k0_i = k0_i.float()
-
         recons_r = torch.zeros(image_r.size())
         recons_i = torch.zeros(image_i.size())
 
