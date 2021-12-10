@@ -40,7 +40,7 @@ for ns = 1 : imsize(3)  % number of slices;
     
     tmp_rec_MC_dc = zeros(size(tmp_img_MC)); 
     
-    mask(imsize(1) / 2 - 10, imsize(1) / 2 + 10, imsize(2) / 2 - 8, imsize(2) / 2 + 8) = 0; % keep the low frequency of the DCRNet recon; 
+    mask(imsize(1) / 2 - 10 : imsize(1) / 2 + 10, imsize(2) / 2 - 8 : imsize(2) / 2 + 8) = 0; % keep the low frequency of the DCRNet recon; 
     
     for i = 1 : imsize(4)  % number of receivers; 
         temp4 = tmp_img_MC(:,:,i); 
