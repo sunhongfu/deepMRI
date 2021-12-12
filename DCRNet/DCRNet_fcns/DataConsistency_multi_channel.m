@@ -1,4 +1,5 @@
-function [rec_dc_combined, rec_dc_mc]= DataConsistency_multi_channel(recs, k_sub, mask, coil_sens, factor)
+% function [rec_dc_combined, rec_dc_mc]= DataConsistency_multi_channel(recs, k_sub, mask, coil_sens, factor)
+function rec_dc_mc = DataConsistency_multi_channel(recs, k_sub, mask, coil_sens, factor)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % data consitentcy for multi-channel data; 
@@ -21,7 +22,7 @@ function [rec_dc_combined, rec_dc_mc]= DataConsistency_multi_channel(recs, k_sub
 
 imsize = size(k_sub); 
 
-rec_dc_combined = zeros(size(recs));  %% size: 256 * 128 * 256 * 1;
+% rec_dc_combined = zeros(size(recs));  %% size: 256 * 128 * 256 * 1;
 
 rec_dc_mc = zeros(imsize); %% size: 256 * 128 * 256 * 32;
 
@@ -32,7 +33,7 @@ k_sub = fftshift(fft(fftshift(k_sub, 3), [], 3), 3);  % size: 256 * 128 * 512 * 
 for ns = 1 : imsize(3)  % number of slices; 
     tmp_img = recs(:,:,ns);
     
-    S = ESPIRiT(squeeze(coil_sens(:,:,ns, :)), ones(imsize(1), imsize(2)));   %% for espirit combination; 
+    % S = ESPIRiT(squeeze(coil_sens(:,:,ns, :)), ones(imsize(1), imsize(2)));   %% for espirit combination; 
     
     tmp_img_MC = tmp_img .* squeeze(coil_sens(:,:,ns, :));  % 256 * 128 * 32;
     
@@ -40,22 +41,26 @@ for ns = 1 : imsize(3)  % number of slices;
     
     tmp_rec_MC_dc = zeros(size(tmp_img_MC)); 
 
-    mask(imsize(1) / 2 - 10 : imsize(1) / 2 + 10, imsize(2) / 2 - 8 : imsize(2) / 2 + 8) = 0; % keep the low frequency of the DCRNet recon; 
+    % mask(imsize(1) / 2 - 10 : imsize(1) / 2 + 10, imsize(2) / 2 - 8 : imsize(2) / 2 + 8) = 0; % keep the low frequency of the DCRNet recon; 
     
     for i = 1 : imsize(4)  % number of receivers; 
         temp4 = tmp_img_MC(:,:,i); 
         temp = tmp_k_sub(:,:,i); 
         k_rec = ifftshift(ifft2(ifftshift(temp4)));
         
-        calib1 = mask .* k_rec;
-        calib2 = mask .* temp;
+        % calib1 = abs(k_rec(imsize(1) / 2 - 10 : imsize(1) / 2 + 10, imsize(2) / 2 - 8 : imsize(2) / 2 + 8));
+        % calib2 = abs(temp(imsize(1) / 2 - 10 : imsize(1) / 2 + 10, imsize(2) / 2 - 8 : imsize(2) / 2 + 8));
         
-        p = polyfit(abs(calib1),abs(calib2),1);  % ksp calibration for data consistency; 
+        % % p = polyfit(abs(calib1),abs(calib2),1);  % ksp calibration for data consistency; 
         
-        k_rec = p(1) * k_rec;
-        
-        k_rec = k_rec / max(abs(k_rec(:)));
-        k_rec = k_rec * max(abs(temp(:)));
+        % % k_rec = p(1) * k_rec;
+
+        % s = sum(calib1(:).*calib2(:))/sum(calib1(:).^2);
+        % k_rec = s * k_rec;
+
+
+        % k_rec = k_rec / max(abs(k_rec(:)));
+        % k_rec = k_rec * max(abs(temp(:)));
         k_dc = factor * mask .* temp + (1 - mask) .* k_rec + (1 - factor) * k_rec .* mask; 
         %% store the results after data consistency
         data = fftshift(fft2(fftshift(k_dc)));
@@ -63,9 +68,9 @@ for ns = 1 : imsize(3)  % number of slices;
         tmp_rec_MC_dc(:,:,i) = data; 
     end
     
-    tmp_combined = S' * tmp_rec_MC_dc;  %% 256 * 128 * 1; 
+    % tmp_combined = S' * tmp_rec_MC_dc;  %% 256 * 128 * 1; 
     
-    rec_dc_combined(:,:,ns) = tmp_combined;
+    % rec_dc_combined(:,:,ns) = tmp_combined;
     
     rec_dc_mc(:,:,ns,:) = tmp_rec_MC_dc;
     
