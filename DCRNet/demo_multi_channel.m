@@ -45,8 +45,7 @@ end
 
 % load undersampling mask if available
 if ~ exist('MaskPath','var') || isempty(MaskPath)
-    disp('Please specify the subsampling mask path!')
-    mask = abs(ksp(:,:,round(n_kx/2)),1,1) > 1e-9;
+    mask = abs(ksp(:,:,round(n_kx/2),1,1)) > 1e-9;
 else
     inp = load(MaskPath);
     f = fields(inp);
