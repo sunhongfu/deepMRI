@@ -64,6 +64,9 @@ if __name__ == '__main__':
         Unet_lfs.load_state_dict(torch.load(
             checkpoint_path, map_location=device))
 
+        Unet_chi = Unet_chi.module
+        Unet_lfs = Unet_lfs.module
+
         iQSM = LoT_Unet(LoT_Layer, Unet_chi)
         iQFM = LoT_Unet(LoT_Layer, Unet_lfs)
 
