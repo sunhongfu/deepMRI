@@ -131,8 +131,8 @@ for echo_num = 1 : imsize(4)
     pred_chi = ZeroRemoving(pred_chi, pos);
     pred_lfs = ZeroRemoving(pred_lfs, pos);
     
-    chi(:,:,:,echo_num) = TE(echo_num) .* pred_chi;
-    lfs(:,:,:,echo_num) = TE(echo_num) .* pred_lfs;
+    chi(:,:,:,echo_num) = pred_chi;
+    lfs(:,:,:,echo_num) = pred_lfs;
     
     clear tmp_phase;
 end
@@ -150,6 +150,11 @@ save_nii(nii, [ReconDir, 'iQFM_all_echoes.nii']);
 
 
 %% magnitude weighted echo-fitting and save as NIFTI
+
+for echo_num = 1 : imsize(4)
+    chi(:,:,:,echo_num) = TE(echo_num) .* pred_chi;
+    lfs(:,:,:,echo_num) = TE(echo_num) .* pred_lfs;
+end
 
 chi_fitted = echofit(chi, mag, TE);
 lfs_fitted = echofit(lfs, mag, TE);

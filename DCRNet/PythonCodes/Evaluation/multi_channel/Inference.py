@@ -1,3 +1,6 @@
+import sys
+sys.path.append('./Model/')
+from DCRNet import *
 import os
 import time
 import torch
@@ -6,10 +9,7 @@ import scipy.io as scio
 import numpy as np
 import torch.nn as nn
 import mat73
-import sys
-sys.path.append('./Model/')
 
-from DCRNet import *
 
 parser = ArgumentParser(description='DCRNet')
 
@@ -102,10 +102,10 @@ if __name__ == '__main__':
         recons_i = recons_i.numpy()
 
         print('Saving results')
-        path = OutputPath + '/rec_real.mat'
+        path = os.path.expanduser(OutputPath) + '/rec_real.mat'
         scio.savemat(path, {'recons_r': recons_r})
 
-        path = OutputPath + '/rec_imag.mat'
+        path = os.path.expanduser(OutputPath) + '/rec_imag.mat'
         scio.savemat(path, {'recons_i': recons_i})
 
         print('ends')
