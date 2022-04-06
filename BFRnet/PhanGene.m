@@ -22,6 +22,7 @@ CoorVecS = zeros(Number,4);
 CoorVecCL = zeros(Number,4);
 Susceptibility = zeros(Number,3);
 % Try to set an ultra matrix to store these 256^3Cubes in 4-D matrix %
+
 %%
 for num = 1:1:Number
    %% Variable Prameters 
@@ -57,6 +58,7 @@ for num = 1:1:Number
             end
         end
     end
+    
     %% Clinder Loop
     for l = 1:1:size1
         for m = 1:1:size2
@@ -69,6 +71,7 @@ for num = 1:1:Number
             end
         end
     end
+    
   %% Cube Switch Cases ( 0:<= / 1:> )
   if   Coor_X<=size_edge1 && Coor_Y<=size_edge2 && Coor_Z<=size_edge3 % 000
      A((Coor_X+1:Coor_X+R*2),(Coor_Y+1:Coor_Y+R*2),(Coor_Z+1:Coor_Z+R*2)) = SusVal(2);
