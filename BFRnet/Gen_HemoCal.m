@@ -25,7 +25,7 @@ z_prjs = [0, 0, 1]; % tesla
 gamma = 267.52; % gyro ratio: rad/s/T
 
 
-for FileNo = 1 : 13824
+for FileNo = 1 : FileNumber  % Patch Number
     
     chi_name = sprintf('./qsm_training/chi_patch_%d.mat', FileNo);
     load(chi_name);
