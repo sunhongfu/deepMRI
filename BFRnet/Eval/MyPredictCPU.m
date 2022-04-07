@@ -1,7 +1,8 @@
-function [Q_pre] = MyPredictCPU(V)
+% Load total field map
+function [Q_pre] = MyPredictCPU(tfs)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-imSize= size(V); 
+imSize= size(tfs); 
 
 %% load Net; 
 
