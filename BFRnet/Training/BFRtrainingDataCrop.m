@@ -2,7 +2,8 @@
 % The training-set includes total field maps (tfs) and background field maps (bkg).
 % Some default settings: 
 % The image size of full-brain is (144, 192, 128), and the patch size is 64^3 . The crop step is 16 voxels in x/y/z axis.
-% Random cropping number (randomN) is 25, and the Iterarion number equals to the number of full-brain images.
+% Random cropping number (randomN) is 30 in default.
+% The Iterarion number equals to the number of full-brain images.
 % One full-brain figure would generate 30 patches in random and 270 patches step-by-step.
 % The patch size and cropping step could be set according to your own needs.
 % We suggest to set a new folder for the cropped patches, e.g., ./path_tfs_patch and ./path_bkg_patch.
@@ -37,8 +38,8 @@ crop_stepX = crop_step(1);crop_stepY = crop_step(2);crop_stepZ = crop_step(3);
     end
 end
 
-for iterS = 1:1:Iteration
 %% Step Cropping
+for iterS = 1:1:Iteration
 for k2 = 1:1:(size_z - batch_size)/crop_stepZ+1
     for j2 = 1:1:(size_y - batch_size)/crop_stepY+1
         for i2 = 1:1:(size_x - batch_size)/crop_stepX+1
