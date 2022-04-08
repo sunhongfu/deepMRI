@@ -18,7 +18,7 @@ end
 
 %% Load the BFRnet and process reconstruction
 
-add path '../' % load the network
+add path '../' % load the network  %%%%%%%%%%%ZXY
 [bkg] = MyPredictCPU(tfs); % Recon using CPU
 
 % [bkg] = MyPredictGPU_New(tfs); % Recon using GPU
