@@ -39,6 +39,10 @@ lfs_label = ans.img;
 % qsm_label = ans.img;
 % lfs = forward_field_calc_HS(qsm_label);
 
+Errormap = lfs_BFRnet - lfs_label;
+nii = make_nii(Errormap);
+save_nii(nii, '../../Errormap_BFRnet.nii');
+
 PSNR_recon = psnr(QSM_recon, single(lfs_label));
 fprintf('PSNR of %s is %f\n', PSNR_recon);
 SSIM_recon = ssim(QSM_recon, single(lfs_label));
