@@ -1,4 +1,4 @@
-## For quick demo/evaluation of our network
+## For quick demo/evaluation of BFRnet
 Please directly run the '**BFRnet_demo.m**' script provided in '**eval**' folder. We have provided a human brain COSMOS and its tocal field map in this folder. The pre-trained BFRnet will be uploaded soon. **16G** of RAM recommended.
 
 ## Training dataset generation
