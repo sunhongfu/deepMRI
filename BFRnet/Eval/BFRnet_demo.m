@@ -1,11 +1,15 @@
-%% navigate MATLAB to the 'eval' folder
-% cd('~/deepMRI/xQSM/matlab/eval');
+
+clear 
+clc 
 
 %% add NIFTI matlab toolbox for read and write NIFTI format
-deepMRI_root = '~/Downloads/deepMRI-master'; % where deepMRI git repo is cloned to; change as yours; 
+deepMRI_root = '~/Downloads/deepMRI-master'; % where deepMRI git repo is cloned to; change as yours;
 addpath(genpath([deepMRI_root,'/utils']));  %  add NIFTI saving and loading functions;
 
-nii = load_nii('../../tfs.nii'); % load the total field map here, and replace the file name with yours. 
+
+NetPath = 'BFRnet_L2_64PS_24BS_45Epo_NewHCmix.mat';  %% give your network path here. 
+
+nii = load_nii('../../tfs.nii'); % load the total field map here, and replace the file name with yours.
 tfs = double(nii.img);
 mask = tfs ~= 0; % brain tissue mask
 
@@ -19,9 +23,12 @@ end
 %% Load the BFRnet and process reconstruction
 
 add path '../' % load the network  %%%%%%%%%%%ZXY
-[bkg] = MyPredictCPU(tfs); % Recon using CPU
 
-% [bkg] = MyPredictGPU_New(tfs); % Recon using GPU
+if canUseGPU()
+    [bkg] = MyPredictGPU(tfs, NetPath); % Recon using GPU
+else
+    [bkg] = MyPredictCPU(tfs, NetPath); % Recon using CPU
+end
 
 bkg = double(bkg .* mask_input); % The reconstructio  result is background field map.
 lfs = tfs .* mask - bkg;
@@ -29,15 +36,10 @@ lfs = tfs .* mask - bkg;
 nii = make_nii(double(lfs));
 save_nii(nii, '../lfs_BFRnet.nii');
 
-%% Evaluation, use default pnsr and ssim 
+%% Evaluation, use default pnsr and ssim
 % Load ground truth of local field
 load_untouch_nii('../../lfs_label.nii');
 lfs_label = ans.img;
-
-% If there's no lfs_label, we could generate from COSMOS using forward calculation.
-% load_untouch_nii('../../cosmos.nii');
-% qsm_label = ans.img;
-% lfs = forward_field_calc_HS(qsm_label);
 
 Errormap = lfs_BFRnet - lfs_label;
 nii = make_nii(Errormap);

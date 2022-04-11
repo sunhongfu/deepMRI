@@ -1,12 +1,12 @@
 % Load total field map
-function [Q_pre] = MyPredictCPU(tfs)
+function [Q_pre] = MyPredictCPU(tfs, NetPath)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 imSize= size(tfs); 
 
 %% load Net; 
 
-load BFRnet_L2_64PS_24BS_45Epo_NewHCmix.mat % 09/01/2022
+load(NetPath)% 09/01/2022
 
 newInput = image3dInputLayer(imSize,...
     'Name','ImageInputLayer', 'Normalization', 'none');

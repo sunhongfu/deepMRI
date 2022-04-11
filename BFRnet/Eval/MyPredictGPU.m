@@ -1,10 +1,11 @@
 % load total field map
-function [Q_pre] = MyPredictGPU(tfs)
+function [Q_pre] = MyPredictGPU(tfs, NetPath)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 imSize= size(tfs); 
 
-load BFRnet_L2_64PS_24BS_45Epo_NewHCmix.mat
+load(NetPath); 
+
 newInput = image3dInputLayer(imSize,...
     'Name','ImageInputLayer', 'Normalization', 'none');
 

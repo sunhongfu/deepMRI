@@ -1,5 +1,5 @@
 ## For quick demo/evaluation of BFRnet
-Please directly run the '**BFRnet_demo.m**' script provided in '**eval**' folder. We have provided a human brain COSMOS and its tocal field map in this folder. The pre-trained BFRnet and demo data are available at https://www.dropbox.com/sh/92b7b4rqhonoyw6/AADCsGqfZYSVDEsD45hxID_ia?dl=0. **16G** of RAM recommended.
+Please directly run the '**BFRnet_demo.m**' script provided in '**eval**' folder. We have provided a human brain COSMOS and its tocal field map in this folder. The pre-trained BFRnet and demo data are available at https://www.dropbox.com/sh/s4i1eyv49qef1ys/AABRpiiudk7gFpYtRVnXrUyBa?dl=0 **16G** of RAM recommended.
 
 ## Training dataset generation
 Please add the '**train**' folder into your MATLAB path and run the scripts '**Gen_HighSus.m**'.
