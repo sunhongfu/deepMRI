@@ -5,7 +5,7 @@
 deepMRI_root = '~/Downloads/deepMRI-master'; % where deepMRI git repo is cloned to; change as yours; 
 addpath(genpath([deepMRI_root,'/utils']));  %  add NIFTI saving and loading functions;
 
-nii = load_nii('../../total_field_input.nii'); % replace the file name with yours. 
+nii = load_nii('../../tfs.nii'); % load the total field map here, and replace the file name with yours. 
 tfs = double(nii.img);
 mask = tfs ~= 0; % brain tissue mask
 
