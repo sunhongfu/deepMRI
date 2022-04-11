@@ -6,4 +6,4 @@ Please add the '**train**' folder into your MATLAB path and run the scripts '**G
 To generate the synthetic background susceptibility and field map, please view '**PhanGene.m**'
 
 ## BFRnet training based on your data
-Please directly run the scripts: '**TrainOctNet130BFR3.m**'. It is strongly recommended that the training should be performed on GPU, or on high performance computing clusters.
+Please directly run the scripts: '**TrainBFRnet.m**'. It is strongly recommended that the training should be performed on GPU, or on high performance computing clusters.
