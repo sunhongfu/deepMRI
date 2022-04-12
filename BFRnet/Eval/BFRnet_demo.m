@@ -7,7 +7,7 @@ deepMRI_root = '~/Downloads/deepMRI-master'; % where deepMRI git repo is cloned 
 addpath(genpath([deepMRI_root,'/utils']));  %  add NIFTI saving and loading functions;
 
 
-NetPath = 'BFRnet_L2_64PS_24BS_45Epo_NewHCmix.mat';  %% give your network path here. 
+NetPath = 'BFRnet.mat';  %% give your network path here. 
 
 nii = load_nii('../../tfs.nii'); % load the total field map here, and replace the file name with yours.
 tfs = double(nii.img);
@@ -30,7 +30,7 @@ else
     [bkg] = MyPredictCPU(tfs, NetPath); % Recon using CPU
 end
 
-bkg = double(bkg .* mask_input); % The reconstructio  result is background field map.
+bkg = double(bkg .* mask); % The reconstructio  result is background field map.
 lfs = tfs .* mask - bkg;
 
 nii = make_nii(double(lfs));
