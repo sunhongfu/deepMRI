@@ -9,7 +9,8 @@ import numpy as np
 class LoTLayer(nn.Module):
     def __init__(self, conv_x):
         super(LoTLayer, self).__init__()
-        self.conv_x = nn.Parameter(conv_x,requires_grad=False)
+        self.conv_x = nn.Parameter(conv_x.clone(),requires_grad=True)
+        self.conv_y = nn.Parameter(conv_x.repeat([15, 1, 1, 1, 1]).clone(), requires_grad=True)
 
     def forward(self, phi, mask, TE, B0):
         
@@ -29,7 +30,19 @@ class LoTLayer(nn.Module):
         b_i = b_i / (B0 * TE)
         b_i = b_i * (3 * 20e-3)
 
-        return b_i
+        a_r = self.LG(expPhi_r, self.conv_y)  ## first term. (delta(1j * phi)
+        a_i = self.LG(expPhi_i, self.conv_y)  
+
+        ## b_r = a_r * expPhi_r + a_i * expPhi_i    ## first term  multiply the second term (exp(-1j * phi) = cos(phi) - j * sin(phi)))
+        d_i = a_i * expPhi_r - a_r * expPhi_i
+
+        d_i = d_i * mask
+
+        ## normalization 
+        d_i = d_i / (B0 * TE)
+        d_i = d_i * (3 * 20e-3)
+
+        return b_i, d_i
 
     def LG(self, tensor_image, weight):
         out = F.conv3d(tensor_image, weight, bias=None,stride=1,padding=1)  ## 3 * 3 kernel, padding 1 zeros. 
@@ -107,7 +120,7 @@ class DecodingBlocks(nn.Module):
 
 
 if __name__ == '__main__':
-    LGOP =  scio.loadmat("3D_Laplacian_Operator.mat", verify_compressed_data_integrity=False)
+    LGOP =  scio.loadmat("3D_LoTlacian_Operator.mat", verify_compressed_data_integrity=False)
     conv_op = LGOP['LM']
     conv_op = np.array(conv_op)
     conv_op = torch.from_numpy(conv_op)
@@ -133,7 +146,7 @@ if __name__ == '__main__':
 
     image = image
 
-    LPLayer = LapLayer(conv_op)
+    LPLayer = LoTLayer(conv_op)
     LPLayer.eval()
     
     recons, _ = LPLayer(image,mask)

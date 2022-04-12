@@ -1,5 +1,5 @@
 % load total field map
-function [Q_pre] = MyPredictGPU(tfs, NetPath)
+function [bkg] = MyPredictGPU(tfs, NetPath)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 imSize= size(tfs); 
@@ -19,7 +19,7 @@ clear net;
 
 predict(L1Net,  zeros(imSize), 'ExecutionEnvironment', 'auto'); % to pre-load the parameters into the memory;
 tic
-Q_pre = predict(L1Net,  tfs, 'ExecutionEnvironment', 'auto'); % Or switch 'auto' to 'gpu'/'multi-gpu' 
+bkg = predict(L1Net,  tfs, 'ExecutionEnvironment', 'auto'); % Or switch 'auto' to 'gpu'/'multi-gpu' 
 toc
 
 end

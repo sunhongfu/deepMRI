@@ -1,5 +1,5 @@
 % Load total field map
-function [Q_pre] = MyPredictCPU(tfs, NetPath)
+function [bkg] = MyPredictCPU(tfs, NetPath)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 imSize= size(tfs); 
@@ -21,7 +21,7 @@ clear net;
 
 predict(L1Net,  zeros(imSize), 'ExecutionEnvironment', 'cpu'); % to pre-load the parameters into the memory;
 tic
-Q_pre = predict(L1Net, tfs, 'ExecutionEnvironment', 'cpu'); 
+bkg = predict(L1Net, tfs, 'ExecutionEnvironment', 'cpu'); 
 toc
 
 end
