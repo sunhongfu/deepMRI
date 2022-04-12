@@ -18,6 +18,8 @@
 
 [xQSM for QSM dipole inversion](#head2)
 
+[BFRnet for QSM background field removal](#head1)
+
 &nbsp;
 &nbsp;
 &nbsp;
@@ -55,4 +57,14 @@
 &nbsp;
 &nbsp;
 
+# <span id="head1"> BFRnet for QSM background field removal </span>
+**BFRnet: A deep learning-based MR background field removal method for QSM of the brain containing significant pathological susceptibility sources**
+
+[source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/BFRnet) &nbsp;  | &nbsp;  [data & checkpoints (dropbox)](https://www.dropbox.com/sh/q678oapc65evrfa/AADh2CGeUzhHh6q9t3Fe3fVVa?dl=0) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2204.02760) &nbsp;  | &nbsp;  
+
+![Whole Framework](https://www.dropbox.com/s/fe408itfqdh61lx/Picture1.tif?raw=1)
+
+&nbsp;
+&nbsp;
+&nbsp;
 [⬆ top](#readme)
