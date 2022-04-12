@@ -52,7 +52,7 @@ nii = make_nii(error);
 save_nii(nii, [ReconDir '/error_BFRnet.nii']);
 
 lfs_msk = lfs(lfs~=0);
-lfs_ver = lfs_msk(:);  % eliminate the surrounding zero-region
+lfs_ver = lfs_msk(:);  % mask the zero-region
 
 lfs_label_msk = lfs_label(lfs_label~=0);
 lfs_label_ver = lfs_label_msk(:);
