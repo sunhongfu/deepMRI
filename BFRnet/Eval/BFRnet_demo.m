@@ -45,7 +45,7 @@ Errormap = lfs_BFRnet - lfs_label;
 nii = make_nii(Errormap);
 save_nii(nii, '../../Errormap_BFRnet.nii');
 
-PSNR_recon = psnr(QSM_recon, single(lfs_label));
+PSNR_recon = psnr(lfs_BFRnet, single(lfs_label));
 fprintf('PSNR of %s is %f\n', PSNR_recon);
-SSIM_recon = ssim(QSM_recon, single(lfs_label));
+SSIM_recon = ssim(lfs_BFRnet, single(lfs_label));
 fprintf('SSIM of %s is %f\n\n',SSIM_recon);
