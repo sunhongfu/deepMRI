@@ -21,7 +21,7 @@ clear net;
 
 predict(L1Net,  zeros(imSize), 'ExecutionEnvironment', 'cpu'); % to pre-load the parameters into the memory;
 tic
-Q_pre = predict(L1Net, V, 'ExecutionEnvironment', 'cpu'); 
+bkg = predict(L1Net, tfs, 'ExecutionEnvironment', 'cpu'); 
 toc
 
 end
