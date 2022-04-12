@@ -19,7 +19,7 @@ clear net;
 
 predict(L1Net,  zeros(imSize), 'ExecutionEnvironment', 'auto'); % to pre-load the parameters into the memory;
 tic
-Q_pre = predict(L1Net,  V, 'ExecutionEnvironment', 'auto'); % Or switch 'auto' to 'gpu'/'multi-gpu' 
+Q_pre = predict(L1Net,  tfs, 'ExecutionEnvironment', 'auto'); % Or switch 'auto' to 'gpu'/'multi-gpu' 
 toc
 
 end
