@@ -51,7 +51,13 @@ error = lfs - lfs_label;
 nii = make_nii(error);
 save_nii(nii, [ReconDir '/error_BFRnet.nii']);
 
-PSNR_recon = psnr(lfs, lfs_label);
+lfs_msk = lfs(lfs~=0);
+lfs_ver = lfs_msk(:);  % eliminate the surrounding zero-region
+
+lfs_label_msk = lfs_label(lfs_label~=0);
+lfs_label_ver = lfs_label_msk(:);
+
+PSNR_recon = psnr(lfs_ver, lfs_label_ver);
 fprintf('PSNR of local field recon is %f\n', PSNR_recon);
-SSIM_recon = ssim(lfs, lfs_label);
+SSIM_recon = ssim(lfs_ver, lfs_label_ver);
 fprintf('SSIM of local field recon is %f\n',SSIM_recon);
