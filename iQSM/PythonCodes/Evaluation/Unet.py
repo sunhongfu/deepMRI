@@ -43,12 +43,9 @@ class Unet(nn.Module):
         self.FinalConv = nn.Conv3d(num_inputs, Out_channels, 1, stride = 1, padding = 0)
 ################## End Section 2 ##########################
 
-    def forward(self, x_b, x_d):
+    def forward(self, x):
         ## input： x, wrapped phase images; 
-        Input = x_b
-
-        x = torch.cat([x_b, x_d], dim = 1)
-        
+        Input = x
         names = self.__dict__
         temp = list(range(1, self.EncodingDepth + 1))
         for encodingLayer in temp:

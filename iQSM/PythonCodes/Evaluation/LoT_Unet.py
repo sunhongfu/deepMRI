@@ -17,10 +17,10 @@ class LoT_Unet(nn.Module):
     def forward(self, wphs, masks, TEs, B0):
         ## input： x, wrapped phase images; 
         
-        LoT_Filtered_results, LearnableFilterd_results = self.LoT_Layer(wphs, masks, TEs, B0)
+        LoT_Filtered_results = self.LoT_Layer(wphs, masks, TEs, B0)
 
-        recon = self.Unet(LoT_Filtered_results, LearnableFilterd_results)
+        recon = self.Unet(LoT_Filtered_results)
 
         recon = recon / 4 ## simple linear normalization due to training settings; 
 
-        return recon, torch.cat([LoT_Filtered_results, LearnableFilterd_results], 1)
+        return recon
