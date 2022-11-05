@@ -3,7 +3,7 @@
 * This repository is for a octave convolutional neural network based QSM dipole inversion. 
 
 - Both Matlab (2019a later) implementation and pytorch (1.4 or later) based implementation were provided in this repo. 
-(2022.Nov.1. we are debugging python version codes for xQSM-net with noise-adding layer, please refer to matlab version for usage)
+(2022.Nov.5. Corrected minor bugs in python version codes and checkpoints) 
 
 * This code was built and tested on Centos 7.8 with Nvdia Tesla V100 and windows 10/ubuntu 19.10 with GTX 1060. 
 
