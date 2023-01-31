@@ -27,7 +27,7 @@
 # <span id="head4"> iQSM for single-step instant QSM </span>
 **Instant tissue field and magnetic susceptibility mapping from MRI raw phase using Laplacian enabled deep neural networks**
 
-[source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/iQSM) &nbsp;  | &nbsp;  [data & checkpoints (dropbox)](https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2111.07665) &nbsp;  |  &nbsp;  [NeuroImage (full paper)](https://www.sciencedirect.com/science/article/pii/S1053811922009636?via%3Dihub)
+[source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/iQSM) &nbsp;  | &nbsp;  [data & checkpoints (dropbox)](https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2111.07665) &nbsp;  |  &nbsp;  [NeuroImage (full paper)](https://www.sciencedirect.com/science/article/pii/S1053811922005274)
 
 ![Whole Framework](https://www.dropbox.com/s/7bxkyu1utxux76k/Figs_1.png?raw=1)
 
