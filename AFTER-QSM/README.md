@@ -64,7 +64,7 @@ Please implement PleaseImplementYourDataset by overriding the function path_comp
     - save_path: save path of testing result.
     - checkpoint_path: path of the selected checkpoint.
   
-    - segment_num a compromise for memeory occpucation for more than 8GB but less than 12GB memory, 8 is preferable for less than 24GB 4 is preferable depending on the matrix size of the testing data.
+    - segment_num a compromise for memory occupation for more than 8GB but less than 12GB memory, 8 is preferable for less than 24GB 4 is preferable depending on the matrix size of the testing data.
 
     - data_type: direct recon if field, forward calculation otherwise.
 

@@ -20,7 +20,7 @@ parser.add_argument('-GPU_NO', type=str, default='0')
 parser.add_argument('-save_path', type=str, default='output')
 parser.add_argument('-checkpoint_path', type=str, default='checkpoints/AFTER-QSM.pkl')
 
-parser.add_argument('-segment_num', type=int, default=8, help='a compromise for memeory occpucation.'
+parser.add_argument('-segment_num', type=int, default=8, help='a compromise for mmemory occupation.'
                                                               'for more than 8GB but less than 12GB memory, 8 is preferable'
                                                               'for less than 24GB 4 is preferable depending on the matrix size'
                                                               'of the testing data'
