@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('-field_path', type=str, default='testing_data/cosmos1.nii.gz')
+parser.add_argument('-file_path', type=str, default='testing_data/ablation_study.nii.gz')
 parser.add_argument('-vox', type=str, default='0.6, 0.6, 0.6')
 parser.add_argument('-z_prjs', type=str, default='0, 0, 1')
 
@@ -33,7 +33,7 @@ def main():
 
     args = parser.parse_args()
 
-    field_path = args.field_path
+    file_path = args.file_path
 
     z_prjs = args.z_prjs
     vox = args.vox
@@ -47,7 +47,7 @@ def main():
     gpu_no = args.GPU_NO
     device = torch.device('cuda:' + gpu_no) if use_gpu else torch.device('cpu')
 
-    data = torch.from_numpy(nib.load(field_path).get_fdata()[np.newaxis, np.newaxis]).to(device, torch.float)[:, :, 1:-1, :, :]
+    data = torch.from_numpy(nib.load(file_path).get_fdata()[np.newaxis, np.newaxis]).to(device, torch.float)[:, :, 1:-1, :, :]
 
     data_type = args.data_type
 
