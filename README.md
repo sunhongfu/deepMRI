@@ -6,7 +6,7 @@
 
 - The codes in this repo were tested on Centos 7.8 with Nvdia Tesla V100 and macos12.0.1/win10/ubuntu19.10 with GTX 1060
 
-Major Update, 31st, Jan, 2023: delete old-version iQSM checkpoints. will upload latest codes and checkpoints shortly.
+Major Update, 31st, Jan, 2023: Delete old-version iQSM checkpoints. Will upload latest codes and checkpoints shortly.
 
 &nbsp;
 &nbsp;
