@@ -2,10 +2,10 @@ function Recon_iQSM_plus(PhasePath, paramspath, MaskPath, MagPath, ReconDir)
 %% iQSM-series reconstruction 
 % this is a universal matlab API for our xQSM and iQFM, iQSM, and iQSM+ recons. 
 % Inputs: 
-% PhasePath: path for raw phase data;
+% PhasePath: path for raw phase data; (4D data: 3D image size * echo_num), e.g., size(phase) = [256, 256,128, 8]; 
 % params: reconstruction parameters including TE, vox, B0, and z_prjs;
-% MaskPath (optional): path for bet mask;
-% MagPath(optional): path for magnitude;
+% MaskPath (optional): path for bet mask; (3D data: 3D image size)
+% MagPath(optional): path for magnitude; (4D data: 3D image size * echo_num)
 % ReconDir (optional): path for reconstruction saving;
 
 % example usage: single-step (iQSM series): Recon_iQSM_series('ph.nii', 'params.mat', './mask.nii', './mag.nii', './'); 
@@ -46,8 +46,8 @@ function Recon_iQSM_plus(PhasePath, paramspath, MaskPath, MagPath, ReconDir)
 % it will have to be preprocessed by multiplication by -1;
 
 % created 11.08, 2022
-% last modified 01.25, 2022
-% latest 0506 2023
+% last modified 08.25, 2023
+% latest 12,06 2023
 
 if ~exist('PhasePath','var') || isempty(PhasePath)
     error('Please input the path for raw phase data!')
