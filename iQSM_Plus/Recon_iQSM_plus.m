@@ -45,10 +45,6 @@ function Recon_iQSM_plus(PhasePath, paramspath, MaskPath, MagPath, ReconDir)
 % Therefore, if your phase data is in the format of "phase = delta_B * gamma * TE;"
 % it will have to be preprocessed by multiplication by -1;
 
-% 2. For Ultra-high resolutin data:
-% it is recommended that the phase data of ultra-high resolution (higher
-% than 0.7 mm) should be interpoloated into 1 mm for better reconstruction results.
-
 % created 11.08, 2022
 % last modified 01.25, 2022
 % latest 0506 2023
