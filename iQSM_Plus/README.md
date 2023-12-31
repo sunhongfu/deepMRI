@@ -1,1 +1,1 @@
-Initial README for iQSM+, the OALFE charged iQSM; 
+Initial README for iQSM+; 
