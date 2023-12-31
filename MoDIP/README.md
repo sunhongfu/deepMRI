@@ -1,2 +1,2 @@
-# Quantitative Susceptibility Mapping through Model-based Deep Image Prior (MoDIP)
-https://arxiv.org/abs/2308.09467
+# MoDIP
+The official code implementation of "Quantitative Susceptibility Mapping through Model-based Deep Image Prior (MoDIP)"
