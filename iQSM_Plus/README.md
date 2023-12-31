@@ -17,12 +17,12 @@
 
 ## <span id="head2">(1) Overall Framework </span>
 
-![Whole Framework](https://www.dropbox.com/s/7bxkyu1utxux76k/Figs_1.png?raw=1)
+![Whole Framework](https://github.com/sunhongfu/deepMRI/blob/master/iQSM_Plus/figs/fig1.png)
 Fig. 1: The overall structure of the proposed (a) Orientation-Adaptive Neural Network, which is constructed by incorporating (b) Plug-and-Play Orientation-Adaptive Latent Feature Editing (OA-LFE) blocks onto conventional deep neural networks. The proposed OA-LFE can learn the encoding of acquisition orientation vectors and seamlessly integrate them into the latent features of deep networks.
 
 ## <span id="head3">(2) Representative Results </span>
 
-![Representative Results](https://www.dropbox.com/s/9jt391q22sgber6/Figs_2.png?raw=1)
+![Representative Results](https://github.com/sunhongfu/deepMRI/blob/master/iQSM_Plus/figs/fig3.png)
 Fig. 2: Comparison of the original iQSM, iQSM-Mixed, and the proposed iQSM+ methods on (a) two simulated brains with different acquisition orientations, and (b) four in vivo brains scanned at multiple 3T MRI platforms. 
 
 # <span id="head4"> Manual </span>
