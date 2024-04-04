@@ -2,7 +2,7 @@
 The official code implementation of "Quantitative Susceptibility Mapping through Model-based Deep Image Prior (MoDIP)
 https://www.sciencedirect.com/science/article/pii/S1053811924000788"
 
-![fig1](./fig1.png)
+![fig1](./MoDIP.png)
 usage
 
 MoDIP reproduce reconstruction.
