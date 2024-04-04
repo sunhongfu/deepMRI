@@ -1,6 +1,6 @@
 # deepMRI: Deep learning methods for MRI
 
-**Authors:** Yang Gao, Hongfu Sun
+**Authors:** Yang Gao, Zhuang Xiong, Hongfu Sun
 
 - This repo is devloped based on Pytorch (1.8 or later) and matlab (R2019a or later). 
 

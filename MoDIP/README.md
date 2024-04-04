@@ -4,8 +4,10 @@ https://www.sciencedirect.com/science/article/pii/S1053811924000788"
 
 ![fig1](./fig1.png)
 usage
+
+MoDIP reproduce reconstruction.
 ```bash
-python recon.py --data_path ./data --save_path ./result 
+python recon.py --data_path sample.nii --save_path ./result --z_prjs 0 0 1 --vox 1 1 2 --input_type phi
 ```
 Key Arguments
 
@@ -13,7 +15,7 @@ Key Arguments
 
 input specify
 - `--is_fieldmap` : whether input is fieldmap or QSM.
-- `--input_type`: Intial input of MoDIP chosen from pure, phi, noise. pure stands for field map in pure-axial orientation.
+- `--input_type`: Initial input of MoDIP chosen from pure, phi, noise. pure stands for field map in pure-axial orientation.
 
 DFO Specify
 - `--iter`: number of iterations for DFO.

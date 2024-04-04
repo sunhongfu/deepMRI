@@ -154,7 +154,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--data_path', type=str, default="")
+    parser.add_argument('--data_path', type=str, default="sample.nii")
 
     # input specify
     parser.add_argument('--is_field', action='store_true',
