@@ -131,11 +131,15 @@ class DIPNet(nn.Module):
 
 class ModelBasedDIPNet(nn.Module):
 
-    def __init__(self, depth, base, decoder_block_num, encoder_norm=nn.Identity, norm=nn.InstanceNorm3d, use_skip=False):
+    def __init__(self, args, encoder_norm=nn.Identity, norm=nn.InstanceNorm3d, use_skip=False):
 
         super(ModelBasedDIPNet, self).__init__()
-        self.iteration = 10
-        self.alphas = 1.2
+        self.iteration = args.iter
+        self.alphas = args.alphas
+
+        depth = args.depth
+        base = args.base
+        decoder_block_num = args.decoder_block_num
 
         self.gen = DIPNet(depth, base, decoder_block_num=decoder_block_num, encoder_norm=encoder_norm, norm=norm, use_skip=use_skip)
 
