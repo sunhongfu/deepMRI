@@ -60,6 +60,7 @@ example usage:
 suppose that you have read the dico_info from your dicom files with dicominfo.m (matlab func)
 then:
 
+```
 % angles!!! (z projections)
 Xz = dicom_info.ImageOrientationPatient(3);
 Yz = dicom_info.ImageOrientationPatient(6);
@@ -67,5 +68,7 @@ Zz = sqrt(1 - Xz^2 - Yz^2);
 Zxyz = cross(dicom_info.ImageOrientationPatient(1:3),dicom_info.ImageOrientationPatient(4:6));
 Zz = Zxyz(3);
 z_prjs = [Xz, Yz, Zz];
+```
+
 
 [⬆ top](#readme)
