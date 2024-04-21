@@ -83,7 +83,7 @@ for NetType = 2
             InferencePath = sprintf('%s/%s/Inference_iQFM.py', PyFolder, KeyWord);
 
         case 2 %% iQSM+_v1
-            KeyWord = 'iQSM_plus_v1';
+            KeyWord = 'iQSM_plus';
             checkpoints  = sprintf('%s/%s/', CheckPoints_folder ,KeyWord);
             % checkpoints  = sprintf('%s/%s_old/', CheckPoints_folder ,KeyWord);
             InferencePath = sprintf('%s/%s/Inference_iQSMSeries.py', PyFolder, KeyWord);
