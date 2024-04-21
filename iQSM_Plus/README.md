@@ -1,6 +1,6 @@
 # Plug-and-Play Latent Feature Editing for Orientation-Adaptive Quantitative Susceptibility Mapping Neural Networks
 
-- This repository is for our iQSM+ method, which enables a direct QSM reconstruction from MRI raw phases acquired at arbitray orientations (https://arxiv.org/abs/2311.07823, under review). 
+- This repository is for our iQSM+ method, which enables a direct QSM reconstruction from MRI raw phases acquired at arbitray orientations (https://doi.org/10.1016/j.media.2024.103160). 
 
 * This code was built and tested on Win11 with RTX 4090, A4000, MacOS with M1 pro max, and a Centos 7.8 platform with Nvdia Tesla V100. 
 

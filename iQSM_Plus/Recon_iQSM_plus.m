@@ -64,7 +64,7 @@ else
     ReconDir = dir(ReconDir).folder;
 end
 
-for NetType = 2
+for NetType = 0:2
     %% Set your own data paths and parameters
     deepMRI_root = '~/deepMRI'; % where deepMRI git repo is downloaded/cloned to
     CheckPoints_folder = '~/deepMRI/iQSM_Plus/PythonCodes/Evaluation/checkpoints';
@@ -106,10 +106,10 @@ for NetType = 2
     end
 
     load(paramspath);
-    %B0 = 3;
+    B0 = 3;
     ori_vox = vox;
     z_prjs = z_prjs / norm(z_prjs); 
-    Eroded_voxel = 3; %% brain erosion for 3 voxels, or 0 for whole head recon;
+    Eroded_voxel = 1; %% brain erosion for 3 voxels, or 0 for whole head recon;
 
     %% add MATLAB paths
     addpath(genpath([deepMRI_root,'/iQSM/iQSM_fcns/']));  % add necessary utility function for saving data and echo-fitting;
@@ -257,6 +257,7 @@ for NetType = 2
 
     nii = make_nii(chi_fitted, ori_vox);
     save_nii(nii, [ReconDir,'/iQSM_plus.nii']);
+    %save_nii(nii, [ReconDir,'/iQSM_plus', num2str(NetType),'.nii']);
 
     delete([ReconDir,'/Network_Input.mat']);
     delete([ReconDir,'/iQSM.mat']);
