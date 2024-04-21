@@ -64,7 +64,7 @@ else
     ReconDir = dir(ReconDir).folder;
 end
 
-for NetType = 0:2
+for NetType = 2
     %% Set your own data paths and parameters
     deepMRI_root = '~/deepMRI'; % where deepMRI git repo is downloaded/cloned to
     CheckPoints_folder = '~/deepMRI/iQSM_Plus/PythonCodes/Evaluation/checkpoints';
