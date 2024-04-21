@@ -27,12 +27,12 @@ Major Update, 31st, Jan, 2023: Delete old-version iQSM checkpoints. Will upload 
 &nbsp;
 &nbsp;
 
-# <span id="head5"> iQSM for single-step instant QSM </span>
+# <span id="head5"> iQSM+ for orientation-adaptive single-step QSM reconstruction </span>
 **Instant tissue field and magnetic susceptibility mapping from MRI raw phase using Laplacian enabled deep neural networks**
 
 [source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/iQSM_Plus) &nbsp;  | &nbsp;   [arXiv (pre-print)](https://arxiv.org/abs/2311.07823) &nbsp;  |  &nbsp;  [MIA (full paper)](https://doi.org/10.1016/j.media.2024.103160)
 
-![Whole Framework](https://www.dropbox.com/s/7bxkyu1utxux76k/Figs_1.png?raw=1)
+![Whole Framework](https://github.com/sunhongfu/deepMRI/blob/master/iQSM_Plus/figs/fig1.png)
 
 # <span id="head4"> iQSM for single-step instant QSM </span>
 **Instant tissue field and magnetic susceptibility mapping from MRI raw phase using Laplacian enabled deep neural networks**
