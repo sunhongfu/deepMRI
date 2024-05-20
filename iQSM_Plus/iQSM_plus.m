@@ -1,6 +1,5 @@
 function QSM = iQSM_plus(phase, TE, varargin)
-
-%------------------- iQSM+ reconstruction guide ------------------------------%
+%------------------- iQSM+ reconstruction manual ------------------------------%
 % this is a latest version of the matlab API for our iQSM+ method;
 %
 % Example Usage:
@@ -38,7 +37,7 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % Analysis, 2024. doi: https://doi.org/10.1016/j.media.2024.103160
 % [2] Gao Y, et al. Instant tissue field and magnetic susceptibility mapping
 % from MRI raw phase using Laplacian enhanced deep neural networks. Neuroimage. 2022
-% doi: 10.1016/j.neuroimage.2022.119410. Epub 2022 Jun 23. PMID: 35753595.
+% doi: https://doi.org/10.1016/j.neuroimage.2022.119410
 % [3] Gao, Y, Zhu, X, Moffat, BA, et al. xQSM: quantitative susceptibility mapping
 % with octave convolutional and noise-regularized neural networks.
 % NMR in Biomedicine. 2021; 34:e4461. https://doi.org/10.1002/nbm.4461.
@@ -50,11 +49,11 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % For more conventional algorithms, e.g., phase combination, phase unwrapping, please
 % download or clone github repo for Hongfu's QSM toolbox: https://github.com/sunhongfu/QSM
 %
-% Author(s): Yang Gao [1,2], Hongfu Sun[3]
+% Author(s): Yang Gao [1,2], Hongfu Sun[2,3]
 % yang.gao@csu.edu.cn / yang.gao@uq.edu.au
-% [1]: Central South University, China, Lecturer
-% [2]: University of Queensland, Australia, Honorary Fellow
-% [3]: Senior Research Fellow: University of NewCas
+% [1]: Central South University, China
+% [2]: the University of Queensland, Australia
+% [3]: the University of NewCastle, Australia
 %
 %------------------- Phase Evolution Type Notice ------------------------------%
 %
@@ -66,10 +65,10 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % it will have to be preprocessed by multiplication by -1;
 %
 %------------------- Phase Evolution Type Notice ends --------------------------%
-%
-% created 11.08, 2022
-% last modified 08.25, 2023
-% latest 17,05 2024
+
+% created 08.11, 2022
+% last modified 25.08, 2023
+% latest version: 17.05, 2024
 
 ReconDir = './'; % path for temporary files;
 
@@ -132,7 +131,7 @@ disp(['eroded_rad = ', num2str(eroded_rad)]);
 te_str = [];
 
 for ii = 1 : size(phase,4)
-te_str=[te_str, num2str(TE(ii)), ' ']; 
+    te_str=[te_str, num2str(TE(ii)), ' '];
 end
 
 disp(['TE = [', te_str, ']'])
