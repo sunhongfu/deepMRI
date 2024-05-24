@@ -8,7 +8,7 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % 'mag', mag, 'mask', mask, ...
 % 'voxel_size', [1, 1, 1], ...
 % 'B0', 3, 'B0_dir', [0, 0, 1], ...
-% 'eroded_rad', 3);
+% 'eroded_rad', 3, 'output_dir', pwd);
 %
 % where Compulsory Inputs are:
 % 1. phase: GRE (gradient echo) MRI phase data;
@@ -29,6 +29,8 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % 7. B0: B0 field strength; detault: 3 (unit: Tesla);
 % 8. eroded_rad: a radius for brain mask erosion control;
 %    default: 3 (3-voxel erosion);
+% 9. output_dir: directory/folder for output of temporary and final results
+%    default: pwd (current working directory)
 % *********************************************************************************
 %
 % Please cite:
@@ -70,21 +72,25 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % last modified 25.08, 2023
 % latest version: 17.05, 2024
 
-ReconDir = './'; % path for temporary files;
 
-%% Set your own data paths and parameters
-deepMRI_root = '~/deepMRI'; % where deepMRI git repo is downloaded/cloned to
-CheckPoints_folder = '~/deepMRI/iQSM_Plus/PythonCodes/Evaluation/checkpoints';
-PyFolder = '~/deepMRI/iQSM_Plus/PythonCodes/Evaluation/iQSM_series';
+% try to automatically locate where the 'iQSM_Plus' folder is downloaded and assign to 'iQSM_Plus_dir'
+[iQSM_Plus_dir, ~, ~] = fileparts(which('iQSM_plus.m'));
+% try to automatically locate where the 'deepMRI' repository is downloaded and assign to 'deepMRI_dir'
+deepMRI_dir = fileparts(iQSM_Plus_dir);
+
+% add MATLAB paths of deepMRI repository
+% add necessary utility function for saving data and echo-fitting;
+% add NIFTI saving and loading functions;
+addpath(genpath(deepMRI_dir));
+
+%% Set checkpoint versions and location
+CheckPoints_folder = [iQSM_Plus_dir, '/PythonCodes/Evaluation/checkpoints'];
+PyFolder = [iQSM_Plus_dir, '/PythonCodes/Evaluation/iQSM_series'];
 KeyWord = 'iQSM_plus_v1';
 
-checkpoints  = sprintf('%s/%s/', CheckPoints_folder ,KeyWord);
-% checkpoints  = sprintf('%s/%s_old/', CheckPoints_folder ,KeyWord);
-InferencePath = sprintf('%s/%s/Inference_iQSMSeries.py', PyFolder, KeyWord);
+checkpoints  = fullfile(CheckPoints_folder, KeyWord);
+InferencePath = fullfile(PyFolder, KeyWord, 'Inference_iQSMSeries.py');
 
-%% add MATLAB paths
-addpath(genpath([deepMRI_root,'/iQSM_Plus/iQSM_fcns/']));  % add necessary utility function for saving data and echo-fitting;
-addpath(genpath([deepMRI_root,'/utils']));  %  add NIFTI saving and loading functions;
 
 if ~exist('phase','var') || isempty(phase)
 
@@ -109,38 +115,35 @@ end
 
 disp(' ')
 cprintf('*[0, 0, 0]', '------------- Extracting optional parameters for reconstruction --------------------\n');
-disp(' ')
 
-[mag, mask, vox, z_prjs, B0, eroded_rad] = parse_iQSM_inputs(size(phase), varargin{:});
+[mag, mask, vox, B0_dir, B0, eroded_rad, output_dir] = parse_iQSM_inputs(size(phase), varargin{:});
 
 
-ori_vox = vox;
-z_prjs = z_prjs / norm(z_prjs);
+B0_dir = B0_dir / norm(B0_dir);
 
 if size(phase, 4) > 1
-    disp(sprintf('Phase is a 4D multi-echo data of size %dx%dx%dx%d',size(phase,1),size(phase,2),size(phase,3), size(phase,4)));
+    fprintf('Phase is a 4D multi-echo data of size %d x %d x %d x %d\n',size(phase,1),size(phase,2),size(phase,3), size(phase,4));
 else 
-    disp(sprintf('Phase is a 3D single-echo data of size %dx%dx%d',size(phase,1),size(phase,2),size(phase,3)));
+    fprintf('Phase is a 3D single-echo data of size %d x %d x %d\n',size(phase,1),size(phase,2),size(phase,3));
 end
-disp(sprintf('Mask is a numerical volume of size %dx%dx%d', size(mask, 1),size(mask, 2),size(mask, 3)));
-disp(sprintf('voxel_size = [%s, %s, %s] mm', num2str(vox(1)), num2str(vox(2)), num2str(vox(3))));
-disp(sprintf('B0_dir = [%s, %s, %s]', num2str(z_prjs(1)), num2str(z_prjs(2)),num2str(z_prjs(3))));
+fprintf('Mask is a numerical volume of size %d x %d x %d\n', size(mask, 1),size(mask, 2),size(mask, 3));
+fprintf('voxel_size = [%s, %s, %s] mm\n', num2str(vox(1)), num2str(vox(2)), num2str(vox(3)));
+fprintf('B0_dir = [%s, %s, %s]\n', num2str(B0_dir(1)), num2str(B0_dir(2)),num2str(B0_dir(3)));
 disp(['B0 field strength = ', num2str(B0)]);
 disp(['eroded_rad = ', num2str(eroded_rad)]);
 
 te_str = [];
-
 for ii = 1 : size(phase,4)
     te_str=[te_str, num2str(TE(ii)), ' '];
 end
-
 disp(['TE = [', te_str, ']'])
 
-disp(' ')
+disp(['output_dir = ', output_dir]);
+
 cprintf('*[0, 0, 0]', '------------- Optional Parameters Extracted Successfully! --------------------------\n');
 disp(' ')
 
-cprintf('*[0, 0, 0]', 'Saving all data as NetworkInput.mat for Pytorch Recon! \n ... \n');
+cprintf('*[0, 0, 0]', 'Saving all data as NetworkInput.mat for Pytorch Recon! \n');
 
 %% 1. save all the data into a NetworkInput.mat file.
 sf = -1;   %% for cooridinates mismatch;
@@ -188,11 +191,11 @@ end
 %% data permutation if necessary;
 
 permute_flag = 0;
-if (abs(z_prjs(3)) < abs(z_prjs(2)))
-    % z_prjs = permute(z_prjs, [1, 3, 2])
-    z_prjs2 = z_prjs;
-    z_prjs(2) = z_prjs2(3);
-    z_prjs(3) = z_prjs2(2);
+if (abs(B0_dir(3)) < abs(B0_dir(2)))
+    % B0_dir = permute(B0_dir, [1, 3, 2])
+    B0_dir2 = B0_dir;
+    B0_dir(2) = B0_dir2(3);
+    B0_dir(3) = B0_dir2(2);
     phase = permute(phase, [1, 3, 2, 4]);
     mask = permute(mask, [1, 3, 2, 4]);
     mag = permute(mag, [1, 3, 2, 4]);
@@ -202,24 +205,21 @@ end
 tmp_phase = ZeroPadding(phase, 16);
 [mask, pos] = ZeroPadding(mask, 16);
 
-[~] = Save_Input_iQSMplus(tmp_phase, mask, TE', B0, eroded_rad, z_prjs, vox, ReconDir);
+[~] = Save_Input_iQSMplus(tmp_phase, mask, TE', B0, eroded_rad, B0_dir, vox, output_dir);
 
 cprintf('*[0, 0, 0]', 'Network Input File generated successfully! \n');
 
-disp(' ')
-
-cprintf('*[0, 0, 0]', 'Pytorch Reconstruction Starts! \n  \n');
+cprintf('*[0, 0, 0]', 'Pytorch Reconstruction Starts! \n');
 
 % Call Python script to conduct the reconstruction; use python API to run iQSM on the demo data
-PythonRecon(InferencePath, [ReconDir,filesep,'Network_Input.mat'], ReconDir, checkpoints);
+PythonRecon(InferencePath, [output_dir,filesep,'Network_Input.mat'], output_dir, checkpoints);
 
 cprintf('*[0, 0, 0]', 'Reconstruction Ends! \n');
-disp(' ')
 
-cprintf('*[0, 0, 0]', 'Postprocessing (e.g., echo fitting) Starts! \n ... \n');
+cprintf('*[0, 0, 0]', 'Postprocessing (e.g., echo fitting) Starts! \n');
 
 %% load reconstruction data and save as NIFTI
-load([ReconDir,'/iQSM.mat']);
+load([output_dir,'/iQSM.mat']);
 % pred_chi = pred_lfs;
 
 pred_chi = squeeze(pred_chi);
@@ -233,7 +233,7 @@ clear tmp_phase;
 %% save results of all echoes before echo fitting
 % comment these codes if you dont want to save temporary results;
 %     nii = make_nii(chi, vox2);
-%     save_nii(nii, [ReconDir, filesep, 'iQSM_all_echoes.nii']);
+%     save_nii(nii, [output_dir, filesep, 'iQSM_all_echoes.nii']);
 
 %% magnitude weighted echo-fitting and save as NIFTI
 
@@ -250,7 +250,7 @@ end
 if interp_flag
     % comment these codes if you dont want to save temporary results;
     %         nii = make_nii(chi_fitted, vox2);
-    %         save_nii(nii, [ReconDir, filesep, 'iQSM_interp_echo_fitted.nii']);
+    %         save_nii(nii, [output_dir, filesep, 'iQSM_interp_echo_fitted.nii']);
 
     % back to original resolution if anisotropic
     chi_fitted = imresize3(chi_fitted,imsize(1:3));
@@ -265,13 +265,15 @@ end
 
 QSM = chi_fitted;
 
-delete([ReconDir,'/Network_Input.mat']);
-delete([ReconDir,'/iQSM.mat']);
+% delete([output_dir,'/Network_Input.mat']);
+% delete([output_dir,'/iQSM.mat']);
+nii = make_nii(QSM, vox);
+save_nii(nii, [output_dir,'/iQSM_plus.nii']);
 
 cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
 
 
-    function [mag, mask, vox, z_prjs, B0, eroded_rad] = parse_iQSM_inputs(imsize, varargin)
+    function [mag, mask, vox, B0_dir, B0, eroded_rad, output_dir] = parse_iQSM_inputs(imsize, varargin)
 
         %% get optional inputs;
         if size(varargin,2)>0
@@ -286,7 +288,7 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
                     vox = varargin{k+1}; %% resolution; voxel size in mm;
                 end
                 if strcmpi(varargin{k},'B0_dir')
-                    z_prjs = varargin{k+1};  %% zprjs, B0_dir in MEDI;
+                    B0_dir = varargin{k+1};  %% zprjs, B0_dir in MEDI;
                 end
                 if strcmpi(varargin{k},'B0')
                     B0 = varargin{k+1};  %% B0 field strength;
@@ -294,27 +296,30 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
                 if strcmpi(varargin{k},'eroded_rad')
                     eroded_rad = varargin{k+1};  %% brain erosion radius;
                 end
+                if strcmpi(varargin{k},'output_dir')
+                    output_dir = varargin{k+1};  %% brain erosion radius;
+                end
             end
 
         end
         %% setup default values;
         if ~exist('B0','var') || isempty(B0)
             cprintf('*[0, 0, 0]', 'Missing B0 input, using default ones: \n')
-            cprintf('-[0, 128, 19]', 'B0 = 3T \n')
+            cprintf('-[0, 128, 19]', 'B0 = 3 \n')
             B0 = 3;  % unit: T
         end
 
         if ~exist('vox','var') || isempty(vox)
             cprintf('*[0, 0, 0]', 'Missing voxel size input, using default ones: \n')
-            cprintf('-[0, 128, 19] ', 'vox = [1 1 1] (unit: mm) \n')
+            cprintf('-[0, 128, 19] ', 'vox = [1 1 1] \n')
             vox = [1 1 1]; % units: mm;
         end
 
-        if ~exist('z_prjs','var') || isempty(z_prjs)
+        if ~exist('B0_dir','var') || isempty(B0_dir)
 
             cprintf('*[0, 0, 0]', 'Missing B0 direction input, using default ones: \n')
-            cprintf('-[0, 128, 19]', 'z_prjs = [0 0 1]  \n')
-            z_prjs = [0, 0, 1];
+            cprintf('-[0, 128, 19]', 'B0_dir = [0 0 1]  \n')
+            B0_dir = [0, 0, 1];
         end
 
         if ~exist('eroded_rad','var') || isempty(eroded_rad)
@@ -325,16 +330,21 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
 
         if ~exist('mag','var') || isempty(mag)
             cprintf('*[0, 0, 0]', 'Missing Magnitude data input, using default ones: \n')
-            cprintf('-[0, 128, 19]', 'mag = 1;  \n')
+            cprintf('-[0, 128, 19]', 'mag = 1 \n')
             mag = ones(imsize);
         end
 
         if ~exist('mask','var') || isempty(mask)
             cprintf('*[0, 0, 0]', 'Missing Brain Mask input, using default ones: \n')
-            cprintf('-[0, 128, 19]', 'mask = 1;  \n')
+            cprintf('-[0, 128, 19]', 'mask = 1 \n')
             mask = ones(imsize);
         end
 
+        if ~exist('output_dir','var') || isempty(output_dir)
+            cprintf('*[0, 0, 0]', 'Missing output_dir for reconstruction outputs, using default ones: \n')
+            cprintf('-[0, 128, 19]', 'output_dir = pwd \n')
+            output_dir = pwd; % path for reconstruction files;
+        end
 
     end
 

@@ -29,6 +29,10 @@ if erode_voxels
     mask = MaskErode(mask, erode_voxels);  % mask erosion
 end
 
+if ~ exist(Folder, 'dir')
+    mkdir(Folder);
+end
+
 save(sprintf('%s/Network_Input.mat', Folder), 'phase', 'mask', 'TE', 'B0', 'z_prjs', 'vox'); 
 
 end
