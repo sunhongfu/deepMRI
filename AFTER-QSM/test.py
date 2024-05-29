@@ -46,9 +46,7 @@ def main():
 
     use_gpu = args.use_GPU
     gpu_no = args.GPU_NO
-    device = torch.device('mps:' + gpu_no) if use_gpu else torch.device('cpu')
-    print(device)
-    print(use_gpu)
+    device = torch.device('cuda:' + gpu_no) if use_gpu else torch.device('cpu')
 
     data = torch.from_numpy(nib.load(file_path).get_fdata()[np.newaxis, np.newaxis]).to(device, torch.float)[:, :, 1:-1, :, :]
 
