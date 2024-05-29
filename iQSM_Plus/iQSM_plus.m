@@ -98,7 +98,6 @@ addpath(genpath(deepMRI_dir));
 CheckPoints_folder = [iQSM_Plus_dir, '/PythonCodes/Evaluation/checkpoints'];
 PyFolder = [iQSM_Plus_dir, '/PythonCodes/Evaluation/iQSM_series'];
 KeyWord = 'iQSM_plus_v1';
->>>>>>> f0a3b16045a65bea4a1f7d638ed2d735117d7b54
 
 checkpoints  = fullfile(CheckPoints_folder, KeyWord);
 InferencePath = fullfile(PyFolder, KeyWord, 'Inference_iQSMSeries.py');
@@ -143,7 +142,6 @@ fprintf('Mask is a numerical volume of size %d x %d x %d\n', size(mask, 1),size(
 fprintf('voxel_size = [%s, %s, %s] mm\n', num2str(vox(1)), num2str(vox(2)), num2str(vox(3)));
 fprintf('B0_dir = [%s, %s, %s]\n', num2str(B0_dir(1)), num2str(B0_dir(2)),num2str(B0_dir(3)));
 disp(['B0 field strength = ', num2str(B0)]);
->>>>>>> f0a3b16045a65bea4a1f7d638ed2d735117d7b54
 disp(['eroded_rad = ', num2str(eroded_rad)]);
 
 te_str = [];
@@ -152,7 +150,6 @@ for ii = 1 : size(phase,4)
 end
 
 disp(['TE = [', te_str, ']'])
->>>>>>> f0a3b16045a65bea4a1f7d638ed2d735117d7b54
 
 disp(['output_dir = ', output_dir]);
 
@@ -330,7 +327,6 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
             cprintf('*[0, 0, 0]', 'Missing voxel size input, using default ones: \n')
 
             cprintf('-[0, 128, 19] ', 'vox = [1 1 1] \n')
->>>>>>> f0a3b16045a65bea4a1f7d638ed2d735117d7b54
             vox = [1 1 1]; % units: mm;
         end
 
@@ -340,7 +336,6 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
             cprintf('-[0, 128, 19]', 'B0_dir = [0 0 1]  \n')
 
             B0_dir = [0, 0, 1];
->>>>>>> f0a3b16045a65bea4a1f7d638ed2d735117d7b54
         end
 
         if ~exist('eroded_rad','var') || isempty(eroded_rad)
@@ -360,7 +355,6 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
 
             cprintf('-[0, 128, 19]', 'mask = 1 \n')
             mask = ones(imsize);
->>>>>>> f0a3b16045a65bea4a1f7d638ed2d735117d7b54
         end
 
         if ~exist('output_dir','var') || isempty(output_dir)
