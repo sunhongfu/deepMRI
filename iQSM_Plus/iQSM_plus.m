@@ -42,15 +42,8 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % with octave convolutional and noise-regularized neural networks.
 % NMR in Biomedicine. 2021; 34:e4461. https://doi.org/10.1002/nbm.4461.
 %
-% For more deep learning based algorithms for background removal and dipole
-% inversion, plese
-% (1) download or clone github repo for deepMRI: https://github.com/sunhongfu/deepMR
-%
-% For more conventional algorithms, e.g., phase combination, phase unwrapping, please
-% download or clone github repo for Hongfu's QSM toolbox: https://github.com/sunhongfu/QSM
-%
 % Author(s): Yang Gao [1,2], Hongfu Sun[2,3]
-% yang.gao@csu.edu.cn / yang.gao@uq.edu.au
+% yang.gao@csu.edu.cn / yang.gao@uq.edu.au / hongfu.sun@uq.edu.au
 % [1]: Central South University, China
 % [2]: the University of Queensland, Australia
 % [3]: the University of NewCastle, Australia
@@ -65,6 +58,14 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % it will have to be preprocessed by multiplication by -1;
 %
 %------------------- Phase Evolution Type Notice ends --------------------------%
+%
+% For more deep learning based algorithms for background removal and dipole
+% inversion, plese
+% (1) download or clone github repo for deepMRI: https://github.com/sunhongfu/deepMR
+%
+% For more conventional algorithms, e.g., phase combination, phase unwrapping, please
+% download or clone github repo for Hongfu's QSM toolbox: https://github.com/sunhongfu/QSM
+
 
 % created 08.11, 2022
 % last modified 25.08, 2023
@@ -72,11 +73,13 @@ function QSM = iQSM_plus(phase, TE, varargin)
 
 ReconDir = './'; % path for temporary files;
 
+    
 %% Set your own data paths and parameters
 deepMRI_root = '~/deepMRI'; % where deepMRI git repo is downloaded/cloned to
 CheckPoints_folder = '~/deepMRI/iQSM_Plus/PythonCodes/Evaluation/checkpoints';
 PyFolder = '~/deepMRI/iQSM_Plus/PythonCodes/Evaluation/iQSM_series';
-KeyWord = 'iQSM_plus_v1';
+% KeyWord = 'iQSM_plus_v1';
+KeyWord = 'iQSM_plus_v2';
 
 checkpoints  = sprintf('%s/%s/', CheckPoints_folder ,KeyWord);
 % checkpoints  = sprintf('%s/%s_old/', CheckPoints_folder ,KeyWord);
@@ -125,7 +128,7 @@ end
 disp(sprintf('Mask is a numerical volume of size %dx%dx%d', size(mask, 1),size(mask, 2),size(mask, 3)));
 disp(sprintf('voxel_size = [%s, %s, %s] mm', num2str(vox(1)), num2str(vox(2)), num2str(vox(3))));
 disp(sprintf('B0_dir = [%s, %s, %s]', num2str(z_prjs(1)), num2str(z_prjs(2)),num2str(z_prjs(3))));
-disp(['B0 field strength = ', num2str(B0)]);
+disp(['B0 field strength = ', num2str(B0), '(T)']);
 disp(['eroded_rad = ', num2str(eroded_rad)]);
 
 te_str = [];
@@ -134,7 +137,7 @@ for ii = 1 : size(phase,4)
     te_str=[te_str, num2str(TE(ii)), ' '];
 end
 
-disp(['TE = [', te_str, ']'])
+disp(['TE = [', te_str, '] (s)'])
 
 disp(' ')
 cprintf('*[0, 0, 0]', '------------- Optional Parameters Extracted Successfully! --------------------------\n');
@@ -143,7 +146,7 @@ disp(' ')
 cprintf('*[0, 0, 0]', 'Saving all data as NetworkInput.mat for Pytorch Recon! \n ... \n');
 
 %% 1. save all the data into a NetworkInput.mat file.
-sf = -1;   %% for cooridinates mismatch;
+sf = 1;   %% for cooridinates mismatch;
 phase = single(phase);
 phase = sf * phase;
 
@@ -306,14 +309,14 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
 
         if ~exist('vox','var') || isempty(vox)
             cprintf('*[0, 0, 0]', 'Missing voxel size input, using default ones: \n')
-            cprintf('-[0, 128, 19] ', 'vox = [1 1 1] (unit: mm) \n')
+            cprintf('-[0, 128, 19] ', 'voxel_size = [1 1 1] (unit: mm) \n')
             vox = [1 1 1]; % units: mm;
         end
 
         if ~exist('z_prjs','var') || isempty(z_prjs)
 
             cprintf('*[0, 0, 0]', 'Missing B0 direction input, using default ones: \n')
-            cprintf('-[0, 128, 19]', 'z_prjs = [0 0 1]  \n')
+            cprintf('-[0, 128, 19]', 'B0_dir = [0 0 1]  \n')
             z_prjs = [0, 0, 1];
         end
 
@@ -332,7 +335,7 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
         if ~exist('mask','var') || isempty(mask)
             cprintf('*[0, 0, 0]', 'Missing Brain Mask input, using default ones: \n')
             cprintf('-[0, 128, 19]', 'mask = 1;  \n')
-            mask = ones(imsize);
+            mask = ones(imsize(1:3));
         end
 
 
