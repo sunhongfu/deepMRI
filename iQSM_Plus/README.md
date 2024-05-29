@@ -39,23 +39,44 @@ Fig. 2: Comparison of the original iQSM, iQSM-Mixed, and the proposed iQSM+ meth
 
 ## <span id="head6"> Quick Start (on demo data) </span>
 
-It is assume that all your data should be saved in NIFTI format (single or double type). 
+It is assume that you have imported/converted your data input matlab matrices. 
 
-Inputs: 
-PhasePath: path for raw phase data;
-params: reconstruction parameters including TE, vox, B0, and z_prjs;
-MaskPath (optional): path for bet mask;
-MagPath(optional): path for magnitude;
-ReconDir (optional): path for reconstruction saving;
+The MATLAB function to run is 'iQSM_plus'. The function returns the iQSM+ result and saves its NIFTI format 'iQSM_plus.nii' and its matlab matrix 'iQSM.mat' in user-defined output folder (default location is current working directory)
+
+Compulsory Inputs are:
+
+1. phase: GRE (gradient echo) MRI phase data;
+organized as a 3D (single-echo, e.g., a 256 x 256 x 128 numerical volume)
+or 4D volume (multi-echo data,  e.g., a data volume of size 256 x 256 x 128 x 8);
+2. TE: Echo Time; Here are two example inputs for
+  i. a single-echo data: TE = 20 * 1e-3; (unit: seconds);
+  ii. a n-echo data (1xn vector): TE = [4, 8, 12, 16, 20, 24, 28, ...] * 1e-3; (unit: seconds);
+
+Optional Inputs are:
+
+3. mag: magnitude data, which is a numerical volume of the same size as the
+   phase input; default: ones;
+4. mask: Brain Mask ROI, whose size is the same as the phase input (1-st
+   echo); default: ones;
+5. voxel_size: image resolution; default: [1 1 1] mm isotropic;
+6. B0_dir: B0 field direction; the same as B0_dir in MEDI toolbox;
+   default: [0 0 1] for pure axial head orientation;
+7. B0: B0 field strength; detault: 3 (unit: Tesla);
+8. eroded_rad: a radius for brain mask erosion control;
+   default: 3 (3-voxel erosion);
+9. output_dir: directory/folder for output of temporary and final results
+   default: pwd (current working directory)
+********************************
 
 see more details in the matlab code
 
 example usage:
 ```
-    Recon_iQSM_plus('ph.nii', 'params.mat', './BET_mask.nii', 'mag.nii','./');
+QSM = iQSM_plus(phase, TE, 'mag', mag, 'mask', mask, 'voxel_size', [1, 1, 1], 'B0', 3, 'B0_dir', [0, 0, 1], 'eroded_rad', 3, 'output_dir', pwd);
+
 ```
 
-## <span id="head7"> How to calculate variable "z_prjs" </span>
+## <span id="head7"> How to calculate variable "B0_dir" </span>
 
 suppose that you have read the dico_info from your dicom files with dicominfo.m (matlab func)
 then:
@@ -67,7 +88,7 @@ Yz = dicom_info.ImageOrientationPatient(6);
 Zz = sqrt(1 - Xz^2 - Yz^2);
 Zxyz = cross(dicom_info.ImageOrientationPatient(1:3),dicom_info.ImageOrientationPatient(4:6));
 Zz = Zxyz(3);
-z_prjs = [Xz, Yz, Zz];
+B0_dir = [Xz, Yz, Zz];
 ```
 
 
