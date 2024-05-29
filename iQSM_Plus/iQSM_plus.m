@@ -44,15 +44,8 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % with octave convolutional and noise-regularized neural networks.
 % NMR in Biomedicine. 2021; 34:e4461. https://doi.org/10.1002/nbm.4461.
 %
-% For more deep learning based algorithms for background removal and dipole
-% inversion, plese
-% (1) download or clone github repo for deepMRI: https://github.com/sunhongfu/deepMR
-%
-% For more conventional algorithms, e.g., phase combination, phase unwrapping, please
-% download or clone github repo for Hongfu's QSM toolbox: https://github.com/sunhongfu/QSM
-%
 % Author(s): Yang Gao [1,2], Hongfu Sun[2,3]
-% yang.gao@csu.edu.cn / yang.gao@uq.edu.au
+% yang.gao@csu.edu.cn / yang.gao@uq.edu.au / hongfu.sun@uq.edu.au
 % [1]: Central South University, China
 % [2]: the University of Queensland, Australia
 % [3]: the University of NewCastle, Australia
@@ -67,10 +60,19 @@ function QSM = iQSM_plus(phase, TE, varargin)
 % it will have to be preprocessed by multiplication by -1;
 %
 %------------------- Phase Evolution Type Notice ends --------------------------%
+%
+% For more deep learning based algorithms for background removal and dipole
+% inversion, plese
+% (1) download or clone github repo for deepMRI: https://github.com/sunhongfu/deepMR
+%
+% For more conventional algorithms, e.g., phase combination, phase unwrapping, please
+% download or clone github repo for Hongfu's QSM toolbox: https://github.com/sunhongfu/QSM
+
 
 % created 08.11, 2022
 % last modified 25.08, 2023
 % latest version: 17.05, 2024
+
 
 
 % try to automatically locate where the 'iQSM_Plus' folder is downloaded and assign to 'iQSM_Plus_dir'
@@ -126,6 +128,7 @@ if size(phase, 4) > 1
 else 
     fprintf('Phase is a 3D single-echo data of size %d x %d x %d\n',size(phase,1),size(phase,2),size(phase,3));
 end
+
 fprintf('Mask is a numerical volume of size %d x %d x %d\n', size(mask, 1),size(mask, 2),size(mask, 3));
 fprintf('voxel_size = [%s, %s, %s] mm\n', num2str(vox(1)), num2str(vox(2)), num2str(vox(3)));
 fprintf('B0_dir = [%s, %s, %s]\n', num2str(B0_dir(1)), num2str(B0_dir(2)),num2str(B0_dir(3)));
@@ -136,6 +139,7 @@ te_str = [];
 for ii = 1 : size(phase,4)
     te_str=[te_str, num2str(TE(ii)), ' '];
 end
+
 disp(['TE = [', te_str, ']'])
 
 disp(['output_dir = ', output_dir]);
@@ -146,7 +150,7 @@ disp(' ')
 cprintf('*[0, 0, 0]', 'Saving all data as NetworkInput.mat for Pytorch Recon! \n');
 
 %% 1. save all the data into a NetworkInput.mat file.
-sf = -1;   %% for cooridinates mismatch;
+sf = 1;   %% for cooridinates mismatch;
 phase = single(phase);
 phase = sf * phase;
 
@@ -311,6 +315,7 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
 
         if ~exist('vox','var') || isempty(vox)
             cprintf('*[0, 0, 0]', 'Missing voxel size input, using default ones: \n')
+
             cprintf('-[0, 128, 19] ', 'vox = [1 1 1] \n')
             vox = [1 1 1]; % units: mm;
         end
@@ -319,6 +324,7 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
 
             cprintf('*[0, 0, 0]', 'Missing B0 direction input, using default ones: \n')
             cprintf('-[0, 128, 19]', 'B0_dir = [0 0 1]  \n')
+
             B0_dir = [0, 0, 1];
         end
 
@@ -336,6 +342,7 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
 
         if ~exist('mask','var') || isempty(mask)
             cprintf('*[0, 0, 0]', 'Missing Brain Mask input, using default ones: \n')
+
             cprintf('-[0, 128, 19]', 'mask = 1 \n')
             mask = ones(imsize);
         end
