@@ -14,7 +14,8 @@ parser.add_argument('-file_path', type=str, default='testing_data/ablation_study
 parser.add_argument('-vox', type=str, default='0.6, 0.6, 0.6')
 parser.add_argument('-z_prjs', type=str, default='0, 0, 1')
 
-parser.add_argument('-use_GPU', type=bool, default=True)
+parser.add_argument('--use_GPU', action='store_true', help='Enable GPU if this flag is used.')
+parser.add_argument('--no_GPU', action='store_false', dest='use_GPU', help='Disable GPU if this flag is used.')
 parser.add_argument('-GPU_NO', type=str, default='0')
 
 parser.add_argument('-save_path', type=str, default='output')
@@ -45,7 +46,9 @@ def main():
 
     use_gpu = args.use_GPU
     gpu_no = args.GPU_NO
-    device = torch.device('cuda:' + gpu_no) if use_gpu else torch.device('cpu')
+    device = torch.device('mps:' + gpu_no) if use_gpu else torch.device('cpu')
+    print(device)
+    print(use_gpu)
 
     data = torch.from_numpy(nib.load(file_path).get_fdata()[np.newaxis, np.newaxis]).to(device, torch.float)[:, :, 1:-1, :, :]
 
