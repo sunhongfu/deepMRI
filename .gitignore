@@ -3,6 +3,7 @@
 *.asv
 *.swp
 *.DS_Store
+*.pyc
 
 xQSM/python/.vscode/settings.json
 xQSM/matlab/eval/Chi_Unet_invivo.nii
