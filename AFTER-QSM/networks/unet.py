@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from utils.helper import reshape_for_Unet_compatibility
 
 
 class Unet(nn.Module):
@@ -61,6 +62,7 @@ class Unet(nn.Module):
                                         for i in range(depth, 0, -1)])
         self._output = nn.Conv3d(base, init, 1, 1, 0)
 
+    @reshape_for_Unet_compatibility(4)
     def forward(self, x):
         skips = []
         inEncoder = self._input(x)
