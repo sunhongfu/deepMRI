@@ -189,7 +189,7 @@ if __name__ == '__main__':
 
         print('Saving results')
 
-        path = os.path.expanduser(OutputPath) + '/iQSM.mat'
+        path = os.path.expanduser(OutputPath) + '/iQSM_plus.mat'
         scio.savemat(path, {'pred_chi': pred_chi})
 
         print('end')
