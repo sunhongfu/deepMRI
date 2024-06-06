@@ -13,8 +13,7 @@ def reshape_for_Unet_compatibility(layer=4):
 
         def wrapper(*args, **kwargs):
 
-            phi = args[0]['phi']
-            mask = args[0]['mask']
+            phi = args[1]
             b, _, w, h, d = phi.shape
 
             padding = [floor((ceil(d / 2 ** layer) * 2 ** layer - d) / 2),
@@ -24,10 +23,7 @@ def reshape_for_Unet_compatibility(layer=4):
                        floor((ceil(w / 2 ** layer) * 2 ** layer - w) / 2),
                        ceil((ceil(w / 2 ** layer) * 2 ** layer - w) / 2)]
 
-            args[0]['phi'] = F.pad(phi, padding)
-            args[0]['mask'] = F.pad(mask, padding)
-
-            pred = eval_func(*args, **kwargs)
+            pred = eval_func(*(args[0], F.pad(phi, padding)), **kwargs)
 
             if len(pred) == 1:
                 b, _, w, h, d = pred.shape
@@ -46,6 +42,26 @@ def reshape_for_Unet_compatibility(layer=4):
         return wrapper
 
     return outer
+
+
+def calculate_3d_bounding_box(tensor_3d):
+    # Get the non-zero indices using torch.nonzero
+    non_zero_indices = torch.nonzero(tensor_3d.squeeze(), as_tuple=False)
+
+    if non_zero_indices.size(0) == 0:
+        # Empty tensor, no bounding box to compute
+        return None
+
+    # Get the minimum and maximum coordinates (x, y, z) of the non-zero elements
+    min_x, _ = torch.min(non_zero_indices[:, 0], dim=0)
+    max_x, _ = torch.max(non_zero_indices[:, 0], dim=0)
+    min_y, _ = torch.min(non_zero_indices[:, 1], dim=0)
+    max_y, _ = torch.max(non_zero_indices[:, 1], dim=0)
+    min_z, _ = torch.min(non_zero_indices[:, 2], dim=0)
+    max_z, _ = torch.max(non_zero_indices[:, 2], dim=0)
+
+    # The bounding box is defined by the minimum and maximum coordinates
+    return [min_x.item(), max_x.item(), min_y.item(), max_y.item(), min_z.item(), max_z.item()]
 
 
 def cubic_padding(func):
