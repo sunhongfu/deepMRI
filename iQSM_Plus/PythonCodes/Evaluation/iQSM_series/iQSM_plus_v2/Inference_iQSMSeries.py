@@ -24,7 +24,7 @@ OutputPath = args.OutputDirectory
 CheckpointsPath = args.CheckpointsDirectory
 
 if __name__ == '__main__':
-    print('iQFM-Net-original')
+    print('iQSM-plus-V1')
     with torch.no_grad():
         print('Network Loading')
         # load trained network
@@ -61,15 +61,15 @@ if __name__ == '__main__':
         conv_op = torch.unsqueeze(conv_op, 0)
         conv_op = torch.unsqueeze(conv_op, 0)
 
-
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        # device = torch.device("cpu")
         #conv_op = torch.rand(1, 1, 3,3,3)
         LoT_Layer_iQSM = LoTLayer(conv_op)
 
         LoT_Layer_iQSM = nn.DataParallel(LoT_Layer_iQSM)
 
         checkpoint_path = os.path.expanduser(
-            CheckpointsPath) + '/LoTLayer_lfs_100.pth'
+            CheckpointsPath) + '/LPLayer_chi.pth'
         LoT_Layer_iQSM.load_state_dict(torch.load(
             checkpoint_path, map_location=device))
 
@@ -77,7 +77,7 @@ if __name__ == '__main__':
         Unet_chi = nn.DataParallel(Unet_chi)
 
         checkpoint_path = os.path.expanduser(
-            CheckpointsPath) + '/iQFM_100.pth'
+            CheckpointsPath) + '/iQSM_plus.pth'
         Unet_chi.load_state_dict(torch.load(
             checkpoint_path, map_location=device))
 
@@ -101,6 +101,7 @@ if __name__ == '__main__':
         LoT_Layer_iQSM = LoT_Layer_iQSM.module
 
         iQSM = LoT_Unet(LoT_Layer_iQSM, Unet_chi)
+
         iQSM = nn.DataParallel(iQSM)
 
         iQSM.to(device)
@@ -140,6 +141,12 @@ if __name__ == '__main__':
 
         TE = TE.float()
 
+        z_prjs = matImage['z_prjs']
+        z_prjs = np.array(z_prjs)
+
+        z_prjs = torch.from_numpy(z_prjs)
+
+        z_prjs = z_prjs.float()
         # if len(image.size()) > 3:
         #     TE = torch.unsqueeze(TE, 1)
         #     TE = torch.unsqueeze(TE, 1)
@@ -156,6 +163,7 @@ if __name__ == '__main__':
         mask = mask.to(device)
         TE = TE.to(device)
         B0 = B0.to(device)
+        z_prjs = z_prjs.to(device)
 
         print('reconing ...')
 
@@ -166,7 +174,7 @@ if __name__ == '__main__':
         for ii in range(0, image.size()[0]):
             tmp_img = image[ii, :, :, :].unsqueeze(0)
             tmp_TE = TE[ii]
-            pred_chi[ii, :, :, :] = iQSM(tmp_img, mask, tmp_TE, B0)
+            pred_chi[ii, :, :, :] = iQSM(tmp_img, mask, tmp_TE, B0, z_prjs)
 
         time_end = time.time()
         print(time_end - time_start)
@@ -181,7 +189,7 @@ if __name__ == '__main__':
 
         print('Saving results')
 
-        path = os.path.expanduser(OutputPath) + '/iQFM.mat'
+        path = os.path.expanduser(OutputPath) + '/iQSM.mat'
         scio.savemat(path, {'pred_chi': pred_chi})
 
         print('end')
