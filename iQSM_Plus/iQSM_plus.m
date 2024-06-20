@@ -354,7 +354,7 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
             cprintf('*[0, 0, 0]', 'Missing Brain Mask input, using default ones: \n')
 
             cprintf('-[0, 128, 19]', 'mask = 1 \n')
-            mask = ones(imsize);
+            mask = ones(imsize(1:3));
         end
 
         if ~exist('output_dir','var') || isempty(output_dir)
