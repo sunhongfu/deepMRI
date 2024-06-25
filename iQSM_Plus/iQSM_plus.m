@@ -250,6 +250,8 @@ if length(size(pred_chi)) ~= 3
 end
 
 chi = ZeroRemoving(pred_chi, pos);
+mask = ZeroRemoving(mask, pos);
+mask_ero = single(chi(:,:,:,1)~=0);
 clear tmp_phase;
 
 %% save results of all echoes before echo fitting
@@ -260,13 +262,31 @@ clear tmp_phase;
 %% magnitude weighted echo-fitting and save as NIFTI
 
 if imsize(4) > 1
-    for echo_num = 1 : imsize(4)
-        chi(:,:,:,echo_num) = TE(echo_num) .* chi(:,:,:,echo_num);
+    
+    if save_flag
+        nii = make_nii(chi, vox);
+        save_nii(nii, [output_dir,'/all_iQSM.nii']);
     end
 
-    chi_fitted = echofit(chi, mag, TE);
+    % compute weighted mean (magnitude and TE weighted)
+    weights = ( mag.*repmat(reshape(TE, [1, 1, 1, length(TE)]), size(mag,[1 2 3])) ).^2;
+    weighted_mean = sum(weights .* chi, 4) ./ sum(weights, 4);
+    weighted_mean(isnan(weighted_mean)) = 0;
+    nii = make_nii(weighted_mean, vox);
+    save_nii(nii, [output_dir,'/iQSM_plus.nii']);
+
+    % compute weighted standard deviation
+    weighted_std_dev = sqrt(sum(weights .* (chi - repmat(weighted_mean,[1 1 1 size(chi,4)])).^2, 4) ./ sum(weights, 4));
+    weighted_std_dev(isnan(weighted_std_dev)) = 0;
+    nii = make_nii(weighted_std_dev, vox);
+    save_nii(nii, [output_dir,'/std_dev.nii']);
+
+    chi_fitted = weighted_mean;
+
 else
+    
     chi_fitted = chi;
+
 end
 
 if interp_flag
@@ -369,6 +389,9 @@ cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
 
             cprintf('-[0, 128, 19]', 'mask = 1 \n')
             mask = ones(imsize(1:3));
+            
+            %in the case of whole head, set eroded_rad to 0
+            eroded_rad = 0;
         end
 
         if ~exist('output_dir','var') || isempty(output_dir)
