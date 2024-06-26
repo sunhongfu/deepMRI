@@ -183,6 +183,8 @@ vox2 = imsize(1:3).*vox ./ imsize2(1:3);
 
 vox2 = round(vox2 * 100) / 100; %% only keep 2 floating points precesion;
 
+vox_orig = vox; % keep the original voxel size for saving final NIFTI files
+
 vox = vox2;
 
 % interpolate the ph to isotropic if necessary
@@ -264,7 +266,7 @@ clear tmp_phase;
 if imsize(4) > 1
     
     if save_flag
-        nii = make_nii(chi, vox);
+        nii = make_nii(chi, vox_orig);
         save_nii(nii, [output_dir,'/all_iQSM.nii']);
     end
 
@@ -272,13 +274,13 @@ if imsize(4) > 1
     weights = ( mag.*repmat(reshape(TE, [1, 1, 1, length(TE)]), size(mag,[1 2 3])) ).^2;
     weighted_mean = sum(weights .* chi, 4) ./ sum(weights, 4);
     weighted_mean(isnan(weighted_mean)) = 0;
-    nii = make_nii(weighted_mean, vox);
+    nii = make_nii(weighted_mean, vox_orig);
     save_nii(nii, [output_dir,'/iQSM_plus.nii']);
 
     % compute weighted standard deviation
     weighted_std_dev = sqrt(sum(weights .* (chi - repmat(weighted_mean,[1 1 1 size(chi,4)])).^2, 4) ./ sum(weights, 4));
     weighted_std_dev(isnan(weighted_std_dev)) = 0;
-    nii = make_nii(weighted_std_dev, vox);
+    nii = make_nii(weighted_std_dev, vox_orig);
     save_nii(nii, [output_dir,'/std_dev.nii']);
 
     chi_fitted = weighted_mean;
@@ -312,7 +314,7 @@ if ~save_flag
     delete([output_dir,'/iQSM_plus.mat']);
 end
 
-nii = make_nii(QSM, vox);
+nii = make_nii(QSM, vox_orig);
 save_nii(nii, [output_dir,'/iQSM_plus.nii']);
 
 cprintf('*[0, 0, 0]', 'iQSM+ results successfully returned! \n');
