@@ -4,8 +4,9 @@
 
 - This repo is devloped based on Pytorch (1.8 or later) and matlab (R2019a or later). 
 
-- The codes in this repo were tested on Centos 7.8 with Nvdia Tesla V100 and macos12.0.1/win10/ubuntu19.10 with GTX 1060
+- The codes in this repo were tested on Centos 7.8 with Nvdia Tesla V100 and macos12.0.1/win10/ubuntu19.10 with NViDia 4090.
 
+Major update, 19, March, 2025: We now have a new and more user-friendly matlab wrapper for iQSM+/iQSM/iQFM/xQSM/xQSM+ reconstuctions; see repe for iQSM+ (#head5) for more details.
 Major Update, 31st, Jan, 2023: Delete old-version iQSM checkpoints. Will upload latest codes and checkpoints shortly.
 
 &nbsp;

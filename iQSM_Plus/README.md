@@ -2,7 +2,11 @@
 
 - This repository is for our iQSM+ method, which enables a direct QSM reconstruction from MRI raw phases acquired at arbitray orientations (https://doi.org/10.1016/j.media.2024.103160). 
 
-* This code was built and tested on Win11 with RTX 4090, A4000, MacOS with M1 pro max, and a Centos 7.8 platform with Nvdia Tesla V100. 
+- This code was built and tested on Win11 with RTX 4090, A4000, MacOS with M1 pro max, and a Centos 7.8 platform with Nvdia Tesla V100. 
+
+* Major updates:
+ I. For windows users: You will have to run iQSM_fcns/ConfigurePython.m first; modify variable "pyExec" (default: 'C:\Users\CSU\anaconda3\envs\Pytorch\python.exe', % conda environment path (windows)),   update the path with yours;
+ II. see [Q&A about z_prjs](#head6) for how to calculate vairbal zprjs; 
 
 # Content
 
