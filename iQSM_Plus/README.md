@@ -4,9 +4,10 @@
 
 - This code was built and tested on Win11 with RTX 4090, A4000, MacOS with M1 pro max, and a Centos 7.8 platform with Nvdia Tesla V100. 
 
-* Major updates:
- I. For windows users: You will have to run iQSM_fcns/ConfigurePython.m first; modify variable "pyExec" (default: 'C:\Users\CSU\anaconda3\envs\Pytorch\python.exe', % conda environment path (windows)),   update the path with yours;
- II. see [Q&A about z_prjs](#head6) for how to calculate vairbal zprjs; 
+- Major update, 19, March, 2025: We now have new and more user-friendly matlab wrappers for iQSM+/iQSM/iQFM/xQSM/xQSM+ reconstuctions; 
+
+- minor Update: For windows users: You will have to run iQSM_fcns/ConfigurePython.m first; modify variable "pyExec" (default: 'C:\Users\CSU\anaconda3\envs\Pytorch\python.exe', % conda environment path (windows)),   update the path with yours;
+- minor Update: see [Q&A about z_prjs](#head6) for how to calculate vairbal zprjs; 
 
 # Content
 
@@ -78,6 +79,12 @@ example usage:
 ```
 QSM = iQSM_plus(phase, TE, 'mag', mag, 'mask', mask, 'voxel_size', [1, 1, 1], 'B0', 3, 'B0_dir', [0, 0, 1], 'eroded_rad', 3, 'output_dir', pwd);
 
+```
+
+for xQSM+ reconstruction, the syntax is similar:
+
+```
+QSM = xQSM_plus(lfs, 'mask', mask, 'B0_dir', [0, 0, 1], 'voxel_size', [1, 1, 1], 'output_dir', pwd);  % for xQSM;
 ```
 
 ## <span id="head7"> How to calculate variable "B0_dir" </span>

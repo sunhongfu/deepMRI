@@ -1,5 +1,6 @@
 # xQSM – Quantitative Susceptibility Mapping with Octave Convolutional Neural Networks
 
+- Major update, 19, March, 2025: We now have new and more user-friendly matlab wrappers for xQSM/xQSM+/iQSM+/iQSM/iQFM reconstuctions (with simpler syntaxes);  see our repo for deepMRI/iQSM_plus for more details. 
 * This repository is for a octave convolutional neural network based QSM dipole inversion. 
 
 - Both Matlab (2019a later) implementation and pytorch (1.4 or later) based implementation were provided in this repo. 

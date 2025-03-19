@@ -80,8 +80,7 @@ Fig. 2: The architecture of the proposed DCRNet, which is developed from a deep 
        conda activate Pytorch
        matlab -nodisplay -r demo_multi_channel
    ```
-```
-
+   
 ## <span id="head8"> Train new DCRNet </span>
 1. Prepare and preprocess your data with the code provided in folder 'MatlabCodes', and have a read on TrainingDataLoader.py:
 ```matlab

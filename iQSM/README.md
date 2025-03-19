@@ -1,5 +1,7 @@
 # Instant tissue field and magnetic susceptibility mapping from MRI raw phase using Laplacian enabled deep neural networks
 
+- Major update, 19, March, 2025: We now have new and more user-friendly matlab wrappers for iQSM+/iQSM/iQFM/xQSM/xQSM+ reconstuctions (with simpler syntaxes); see repo for deepMRI/iQSM_plus for more details. 
+
 - This repository is for a large-stencil Laplacian preprocessed deep neural network for near instant quantitative field and susceptibility mapping (i.e., iQFM and iQSM), enabling a single-step (end-to-end) local field and QSM reconstrcution from the raw MRI phase images, which is introduced in this paper: https://arxiv.org/abs/2111.07665 (under review).
 
 * This code was built and tested on Centos 7.8 with Nvdia Tesla V100 and macos12.0.1/ubuntu 19.10 with GTX 1060.
