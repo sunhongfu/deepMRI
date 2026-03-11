@@ -330,7 +330,7 @@ def run_iqsm_plus(
 
     te_t = torch.from_numpy(te).float().to(device)
     b0_t = torch.tensor([b0], dtype=torch.float32).to(device)
-    z_prjs_t = torch.from_numpy(b0_dir.astype(np.float32)).to(device)
+    z_prjs_t = torch.from_numpy(b0_dir.astype(np.float32)).unsqueeze(0).unsqueeze(0).to(device)  # (1, 1, 3)
 
     # phase_pad shape: (H, W, D, N_echoes)
     phase_t = torch.from_numpy(phase_pad).float()           # (H, W, D, N)
