@@ -23,6 +23,10 @@ import numpy as np
 
 from inference import run_iqsm_plus
 
+# dicom_utils is imported lazily inside the DICOM callbacks so that missing
+# pydicom only raises an error when the user actually tries the DICOM path.
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -76,13 +80,41 @@ def _make_slice_figure(nii_path: str):
 
 
 # ---------------------------------------------------------------------------
+# DICOM helper callbacks
+# ---------------------------------------------------------------------------
+
+def _auto_te_from_dicom(dcm_files) -> str:
+    """
+    Called when DICOM phase files are uploaded.
+    Returns echo times (seconds) as a comma-separated string for the TE box.
+    """
+    if not dcm_files:
+        return ""
+    try:
+        from dicom_utils import extract_te_from_dicoms
+        paths = [f.name for f in dcm_files]
+        te_values = extract_te_from_dicoms(paths)
+        if te_values:
+            return ", ".join(f"{te:.6g}" for te in te_values)
+    except Exception:
+        pass
+    return ""
+
+
+# ---------------------------------------------------------------------------
 # Core reconstruction callback
 # ---------------------------------------------------------------------------
 
 def reconstruct(
+    input_mode,
+    # NIfTI inputs
     phase_file,
-    te_str,
     mag_file,
+    # DICOM inputs
+    phase_dcm,
+    mag_dcm,
+    # Shared
+    te_str,
     mask_file,
     voxel_str,
     b0dir_str,
@@ -91,13 +123,55 @@ def reconstruct(
     negate_phase,
     progress=gr.Progress(track_tqdm=True),
 ):
-    # ── Validate compulsory inputs ──────────────────────────────────────────
-    if phase_file is None:
-        raise gr.Error("Please upload a phase NIfTI file.")
-    if not te_str.strip():
-        raise gr.Error("Please enter at least one echo time (TE).")
+    # ── Resolve phase / magnitude paths and TE values ───────────────────────
+    dcm_tmp = None
 
-    te_values = _parse_floats(te_str, "Echo time(s) (TE)")
+    if input_mode == "DICOM series":
+        if not phase_dcm:
+            raise gr.Error("Please upload phase DICOM files.")
+        try:
+            from dicom_utils import dicoms_to_nifti
+        except ImportError as exc:
+            raise gr.Error(str(exc))
+
+        dcm_tmp = tempfile.mkdtemp(prefix="iqsm_dcm_in_")
+
+        try:
+            phase_nii_path, dcm_te = dicoms_to_nifti(
+                [f.name for f in phase_dcm], dcm_tmp, label="phase"
+            )
+        except Exception as exc:
+            raise gr.Error(f"Failed to read phase DICOM files: {exc}")
+
+        mag_nii_path = None
+        if mag_dcm:
+            try:
+                mag_nii_path, _ = dicoms_to_nifti(
+                    [f.name for f in mag_dcm], dcm_tmp, label="mag"
+                )
+            except Exception as exc:
+                raise gr.Error(f"Failed to read magnitude DICOM files: {exc}")
+
+        # Use DICOM-extracted TEs unless the user overrode the field
+        if te_str.strip():
+            te_values = _parse_floats(te_str, "Echo time(s) (TE)")
+        else:
+            te_values = dcm_te
+            if not te_values:
+                raise gr.Error(
+                    "Could not extract echo times from the DICOM files.  "
+                    "Please enter them manually in the TE field."
+                )
+
+    else:  # NIfTI mode
+        if phase_file is None:
+            raise gr.Error("Please upload a phase NIfTI file.")
+        if not te_str.strip():
+            raise gr.Error("Please enter at least one echo time (TE).")
+        phase_nii_path = phase_file.name
+        mag_nii_path   = mag_file.name if mag_file else None
+        te_values      = _parse_floats(te_str, "Echo time(s) (TE)")
+
     if any(t <= 0 for t in te_values):
         raise gr.Error("Echo times must be positive. Enter values in seconds (e.g. 0.020).")
 
@@ -126,9 +200,9 @@ def reconstruct(
 
     try:
         out_path = run_iqsm_plus(
-            phase_nii_path=phase_file.name,
+            phase_nii_path=phase_nii_path,
             te_values=te_values,
-            mag_nii_path=mag_file.name if mag_file else None,
+            mag_nii_path=mag_nii_path,
             mask_nii_path=mask_file.name if mask_file else None,
             voxel_size=voxel_size,
             b0_dir=b0_dir,
@@ -169,8 +243,8 @@ DESCRIPTION = """
 using the *iQSM+* deep learning model ([paper](https://doi.org/10.1016/j.media.2024.103160)).
 
 **Quick-start:**
-1. Upload your **phase** NIfTI file (`.nii` or `.nii.gz`).
-2. Enter the echo time(s) **in seconds** (comma-separated for multi-echo).
+1. Upload your phase data as **NIfTI** or select the **DICOM** tab to upload raw DICOM files.
+2. Verify the echo time(s) **in seconds** (auto-filled for DICOM).
 3. Adjust parameters as needed and click **Run Reconstruction**.
 4. Download the QSM result and open it in FSLeyes / ITK-SNAP / 3D Slicer.
 """
@@ -178,11 +252,12 @@ using the *iQSM+* deep learning model ([paper](https://doi.org/10.1016/j.media.2
 HELP_TE = (
     "Echo time(s) in **seconds**. "
     "Single-echo example: `0.020`. "
-    "Multi-echo example: `0.004, 0.008, 0.012, 0.016, 0.020`."
+    "Multi-echo example: `0.004, 0.008, 0.012, 0.016, 0.020`. "
+    "Auto-filled when DICOM files are uploaded."
 )
 HELP_VOX = (
     "Voxel size in mm (x y z). "
-    "Leave blank to read from the NIfTI header (recommended). "
+    "Leave blank to read from the NIfTI header or DICOM metadata (recommended). "
     "Example: `1 1 2`."
 )
 HELP_B0DIR = (
@@ -190,10 +265,15 @@ HELP_B0DIR = (
     "Leave blank for default `0 0 1` (pure axial). "
     "Example for tilted acquisition: `0.04 0.05 0.998`."
 )
-HELP_PHASE = (
+HELP_PHASE_NII = (
     "Wrapped phase NIfTI file. "
     "Expects **phase = −ΔB · γ · TE** convention. "
     "3D (single-echo) or 4D (multi-echo) volumes are both supported."
+)
+HELP_PHASE_DCM = (
+    "Select **all** DICOM slice files from the phase series "
+    "(single- or multi-echo). Echo times are extracted automatically "
+    "from the DICOM headers and shown in the TE field below."
 )
 HELP_NEGATE = (
     "Tick this if your QSM result looks inverted (veins appear bright instead of dark). "
@@ -209,13 +289,58 @@ def build_ui():
         with gr.Row():
             # ── Left column: inputs ──────────────────────────────────────
             with gr.Column(scale=1):
-                gr.Markdown("### Required inputs")
+                gr.Markdown("### Phase & magnitude input")
 
-                phase_file = gr.File(
-                    label="Phase NIfTI (.nii / .nii.gz)",
-                    file_types=[".nii", ".gz"],
+                input_tabs = gr.Tabs()
+                with input_tabs:
+                    # ── NIfTI tab ─────────────────────────────────────────
+                    with gr.Tab("NIfTI files"):
+                        phase_file = gr.File(
+                            label="Phase NIfTI (.nii / .nii.gz)",
+                            file_types=[".nii", ".gz"],
+                        )
+                        gr.Markdown(f"<small>{HELP_PHASE_NII}</small>")
+                        mag_file = gr.File(
+                            label="Magnitude NIfTI (optional)",
+                            file_types=[".nii", ".gz"],
+                        )
+
+                    # ── DICOM tab ─────────────────────────────────────────
+                    with gr.Tab("DICOM series"):
+                        phase_dcm = gr.File(
+                            label="Phase DICOM files (select all slices / all echoes)",
+                            file_count="multiple",
+                            file_types=[".dcm", ".ima", "."],
+                        )
+                        gr.Markdown(f"<small>{HELP_PHASE_DCM}</small>")
+                        mag_dcm = gr.File(
+                            label="Magnitude DICOM files (optional)",
+                            file_count="multiple",
+                            file_types=[".dcm", ".ima", "."],
+                        )
+
+                # input_mode tracks which tab is active (used in reconstruct)
+                input_mode = gr.State("NIfTI files")
+                input_tabs.change(
+                    fn=lambda tab: tab,
+                    inputs=[input_tabs],
+                    outputs=[input_mode],
                 )
-                gr.Markdown(f"<small>{HELP_PHASE}</small>")
+
+                # ── Shared: echo times ────────────────────────────────────
+                gr.Markdown("### Echo time(s)")
+                te_str = gr.Textbox(
+                    label="TE (seconds)",
+                    placeholder="e.g.  0.020   or   0.004, 0.008, 0.012",
+                )
+                gr.Markdown(f"<small>{HELP_TE}</small>")
+
+                # Auto-populate TE when DICOM phase files are uploaded
+                phase_dcm.upload(
+                    fn=_auto_te_from_dicom,
+                    inputs=[phase_dcm],
+                    outputs=[te_str],
+                )
 
                 negate_phase = gr.Checkbox(
                     label="Reverse phase sign (opposite scanner convention)",
@@ -223,23 +348,14 @@ def build_ui():
                 )
                 gr.Markdown(f"<small>{HELP_NEGATE}</small>")
 
-                te_str = gr.Textbox(
-                    label="Echo time(s) – TE (seconds)",
-                    placeholder="e.g.  0.020   or   0.004, 0.008, 0.012",
-                )
-                gr.Markdown(f"<small>{HELP_TE}</small>")
-
+                # ── Shared: brain mask ────────────────────────────────────
                 gr.Markdown("### Optional inputs")
-
-                mag_file = gr.File(
-                    label="Magnitude NIfTI (optional)",
-                    file_types=[".nii", ".gz"],
-                )
                 mask_file = gr.File(
-                    label="Brain mask NIfTI (optional – 3D binary)",
+                    label="Brain mask NIfTI (optional – 3D binary, speeds up inference)",
                     file_types=[".nii", ".gz"],
                 )
 
+                # ── Acquisition parameters ────────────────────────────────
                 gr.Markdown("### Acquisition parameters")
 
                 with gr.Row():
@@ -291,16 +407,19 @@ def build_ui():
 
                 gr.Markdown("#### Preview (middle slice)")
                 with gr.Row():
-                    axial_img   = gr.Image(label="Axial",    show_label=True)
-                    coronal_img = gr.Image(label="Coronal",  show_label=True)
+                    axial_img    = gr.Image(label="Axial",    show_label=True)
+                    coronal_img  = gr.Image(label="Coronal",  show_label=True)
                     sagittal_img = gr.Image(label="Sagittal", show_label=True)
 
         # ── Wire up the button ───────────────────────────────────────────
         run_btn.click(
             fn=reconstruct,
             inputs=[
-                phase_file, te_str,
-                mag_file, mask_file,
+                input_mode,
+                phase_file, mag_file,
+                phase_dcm, mag_dcm,
+                te_str,
+                mask_file,
                 voxel_str, b0dir_str,
                 b0_val, eroded_rad,
                 negate_phase,
