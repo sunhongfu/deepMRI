@@ -65,11 +65,11 @@ def _make_slice_figure(nii_path: str):
         ax.set_title(title, fontsize=12)
         ax.axis("off")
         fig.tight_layout(pad=0.5)
-        # Render to numpy array
+        # buffer_rgba() works across all matplotlib versions (tostring_rgb removed in 3.8)
         fig.canvas.draw()
-        buf = np.frombuffer(fig.canvas.tostring_rgb(), dtype=np.uint8)
-        buf = buf.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-        imgs.append(buf)
+        w, h = fig.canvas.get_width_height()
+        buf = np.frombuffer(fig.canvas.buffer_rgba(), dtype=np.uint8).reshape(h, w, 4)
+        imgs.append(buf[:, :, :3].copy())
         plt.close(fig)
 
     return imgs[0], imgs[1], imgs[2]
@@ -88,6 +88,7 @@ def reconstruct(
     b0dir_str,
     b0_val,
     eroded_rad,
+    negate_phase,
     progress=gr.Progress(track_tqdm=True),
 ):
     # ── Validate compulsory inputs ──────────────────────────────────────────
@@ -113,6 +114,10 @@ def reconstruct(
         if np.linalg.norm(b0_dir) == 0:
             raise gr.Error("B0 direction must not be the zero vector.")
 
+    # phase_sign: the model internally applies −1; an extra −1 here cancels it
+    # for scanners that already deliver phase = −ΔB·γ·TE
+    phase_sign = 1 if negate_phase else -1
+
     # ── Run reconstruction ──────────────────────────────────────────────────
     output_dir = tempfile.mkdtemp(prefix="iqsm_plus_out_")
 
@@ -129,6 +134,7 @@ def reconstruct(
             b0_dir=b0_dir,
             b0=float(b0_val),
             eroded_rad=int(eroded_rad),
+            phase_sign=phase_sign,
             output_dir=output_dir,
             progress_fn=_progress,
         )
@@ -145,10 +151,9 @@ def reconstruct(
         ax_img = cor_img = sag_img = None
 
     status = (
-        "✅ Reconstruction complete!\n"
-        f"Output saved to: {out_path}\n\n"
-        "Download the NIfTI file below and open it in your preferred viewer "
-        "(e.g. FSLeyes, ITK-SNAP, 3D Slicer)."
+        "✅ Reconstruction complete! "
+        "Use the Download button below to save the QSM NIfTI, "
+        "then open it in FSLeyes / ITK-SNAP / 3D Slicer."
     )
 
     return status, out_path, ax_img, cor_img, sag_img
@@ -190,6 +195,10 @@ HELP_PHASE = (
     "Expects **phase = −ΔB · γ · TE** convention. "
     "3D (single-echo) or 4D (multi-echo) volumes are both supported."
 )
+HELP_NEGATE = (
+    "Tick this if your QSM result looks inverted (veins appear bright instead of dark). "
+    "Some scanners store phase as **+ΔB · γ · TE**; ticking this corrects the convention."
+)
 
 
 def build_ui():
@@ -207,6 +216,12 @@ def build_ui():
                     file_types=[".nii", ".gz"],
                 )
                 gr.Markdown(f"<small>{HELP_PHASE}</small>")
+
+                negate_phase = gr.Checkbox(
+                    label="Reverse phase sign (opposite scanner convention)",
+                    value=False,
+                )
+                gr.Markdown(f"<small>{HELP_NEGATE}</small>")
 
                 te_str = gr.Textbox(
                     label="Echo time(s) – TE (seconds)",
@@ -263,11 +278,16 @@ def build_ui():
 
                 status_box = gr.Textbox(
                     label="Status",
-                    lines=4,
+                    lines=2,
                     interactive=False,
                     placeholder="Reconstruction output will appear here …",
                 )
-                download_btn = gr.File(label="Download QSM NIfTI", interactive=False)
+
+                download_file = gr.File(
+                    label="⬇ Download QSM NIfTI",
+                    file_count="single",
+                    visible=True,
+                )
 
                 gr.Markdown("#### Preview (middle slice)")
                 with gr.Row():
@@ -283,8 +303,9 @@ def build_ui():
                 mag_file, mask_file,
                 voxel_str, b0dir_str,
                 b0_val, eroded_rad,
+                negate_phase,
             ],
-            outputs=[status_box, download_btn, axial_img, coronal_img, sagittal_img],
+            outputs=[status_box, download_file, axial_img, coronal_img, sagittal_img],
         )
 
         gr.Markdown(
@@ -316,4 +337,5 @@ if __name__ == "__main__":
         server_name=args.server_name,
         server_port=args.server_port,
         show_error=True,
+        allowed_paths=[tempfile.gettempdir()],
     )

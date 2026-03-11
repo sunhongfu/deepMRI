@@ -191,6 +191,7 @@ def run_iqsm_plus(
     b0_dir: list | None = None,
     b0: float = 3.0,
     eroded_rad: int = 3,
+    phase_sign: int = -1,
     output_dir: str | None = None,
     progress_fn=None,
 ) -> str:
@@ -217,6 +218,11 @@ def run_iqsm_plus(
         B0 field strength in Tesla. Default: 3.0.
     eroded_rad : int
         Radius (voxels) for brain-mask erosion. Default: 3.
+    phase_sign : int (+1 or -1)
+        Multiplier applied to the raw phase before passing it to the model.
+        Default −1 matches the original MATLAB pipeline (scanner convention
+        phase = +ΔB·γ·TE).  Use +1 if your scanner already stores phase as
+        −ΔB·γ·TE (i.e., the sign is already inverted).
     output_dir : str, optional
         Directory where output NIfTI is written. Defaults to a temp dir.
     progress_fn : callable(float, str), optional
@@ -297,8 +303,8 @@ def run_iqsm_plus(
     # 3. Preprocessing (mirrors iQSM_plus.m steps)
     # ------------------------------------------------------------------
 
-    # 3a. Phase sign convention flip (matches MATLAB sf = -1)
-    phase = -1.0 * phase
+    # 3a. Phase sign convention flip (matches MATLAB sf = -1 by default)
+    phase = float(phase_sign) * phase
 
     # 3b. Isotropic interpolation
     interp_flag = not np.allclose(vox, vox.min())
