@@ -87,7 +87,8 @@ def get_model(device: torch.device) -> nn.Module:
     unet.eval()
 
     model = LoT_Unet(lot_layer, unet)
-    model = nn.DataParallel(model)
+    if torch.cuda.device_count() > 1:
+        model = nn.DataParallel(model)
     model.to(device)
     model.eval()
 
@@ -101,15 +102,9 @@ def get_model(device: torch.device) -> nn.Module:
 
 def _make_sphere(radius: int) -> np.ndarray:
     """Spherical binary structuring element of given radius."""
-    d = 2 * radius + 1
-    struct = np.zeros((d, d, d), dtype=bool)
-    c = radius
-    for i in range(d):
-        for j in range(d):
-            for k in range(d):
-                if (i - c) ** 2 + (j - c) ** 2 + (k - c) ** 2 <= radius ** 2:
-                    struct[i, j, k] = True
-    return struct
+    c = np.arange(-radius, radius + 1)
+    x, y, z = np.meshgrid(c, c, c, indexing='ij')
+    return (x**2 + y**2 + z**2) <= radius**2
 
 
 def _zero_pad(arr: np.ndarray, multiple: int = 16):
@@ -137,6 +132,23 @@ def _zero_remove(arr: np.ndarray, positions: list) -> np.ndarray:
     if arr.ndim == 3:
         return arr[x1:x2, y1:y2, z1:z2]
     return arr[x1:x2, y1:y2, z1:z2, :]
+
+
+def _brain_bbox(mask: np.ndarray, pad: int = 16) -> tuple:
+    """
+    Bounding box of nonzero mask region, expanded by `pad` voxels on each side
+    and clamped to valid array indices.  Returns a tuple of slices (one per dim).
+    Falls back to the full volume if the mask is empty.
+    """
+    nonzero = np.argwhere(mask > 0.5)
+    if len(nonzero) == 0:
+        return tuple(slice(0, s) for s in mask.shape)
+    mins = nonzero.min(axis=0)
+    maxs = nonzero.max(axis=0)
+    return tuple(
+        slice(max(0, int(lo) - pad), min(int(s), int(hi) + 1 + pad))
+        for lo, hi, s in zip(mins, maxs, mask.shape)
+    )
 
 
 def _interpolate_phase_to_isotropic(phase: np.ndarray, vox: np.ndarray) -> np.ndarray:
@@ -316,9 +328,15 @@ def run_iqsm_plus(
         mag = np.transpose(mag, (0, 2, 1, 3))
         mask = np.transpose(mask, (1, 0, 2))  # mask is 3D
 
-    # 3e. Zero-pad to multiples of 16
-    phase_pad, positions = _zero_pad(phase, 16)
-    mask_pad, _ = _zero_pad(mask, 16)
+    # 3e. Crop to brain bounding box (+ 16-voxel context padding)
+    bbox = _brain_bbox(mask, pad=16)
+    phase_crop = phase[bbox + (slice(None),)]   # (H_c, W_c, D_c, N)
+    mask_crop  = mask[bbox]                     # (H_c, W_c, D_c)
+    _log(0.22, f"Cropped volume: {phase.shape[:3]} → {phase_crop.shape[:3]}")
+
+    # 3f. Zero-pad cropped volume to multiples of 16
+    phase_pad, positions = _zero_pad(phase_crop, 16)
+    mask_pad, _          = _zero_pad(mask_crop,  16)
 
     # ------------------------------------------------------------------
     # 4. Deep learning inference
@@ -342,7 +360,7 @@ def run_iqsm_plus(
 
     pred_chi = torch.zeros_like(phase_t)  # (N, 1, H, W, D)
 
-    with torch.no_grad():
+    with torch.inference_mode():
         for i in range(n_echoes):
             _log(
                 0.30 + 0.50 * (i / n_echoes),
@@ -362,20 +380,16 @@ def run_iqsm_plus(
     # ------------------------------------------------------------------
     _log(0.82, "Post-processing …")
 
-    # 5a. Remove zero-padding
-    chi = _zero_remove(pred_chi, positions)         # (H, W, D, N)
+    # 5a. Remove zero-padding from cropped result, paste back into full volume
+    chi_crop = _zero_remove(pred_chi, positions)           # (H_c, W_c, D_c, N)
+    chi = np.zeros((*phase.shape[:3], n_echoes), dtype=np.float32)
+    chi[bbox + (slice(None),)] = chi_crop                  # (H, W, D, N)
 
     # 5b. Multi-echo magnitude+TE-weighted fitting → single QSM map
+    # mag is already at full spatial size (H, W, D, N) — no trimming needed
     if n_echoes > 1:
-        mag_trimmed = _zero_remove(
-            np.transpose(mag if not permute_flag else np.transpose(mag, (0, 2, 1, 3)),
-                         (0, 1, 2, 3)),
-            positions,
-        ) if not permute_flag else _zero_remove(mag, positions)
-
-        # weights = (mag * TE)^2
         te_bc = te.reshape(1, 1, 1, -1)
-        mag_echo = mag_trimmed if mag_trimmed.ndim == 4 else mag_trimmed[:, :, :, np.newaxis]
+        mag_echo = mag if mag.ndim == 4 else mag[:, :, :, np.newaxis]
         weights = (mag_echo * te_bc) ** 2
         denom = weights.sum(axis=3, keepdims=True)
         denom[denom == 0] = 1.0
