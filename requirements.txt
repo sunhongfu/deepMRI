@@ -1,15 +1,13 @@
-# deepMRI – Python dependencies
-# Install with:   pip install -r requirements.txt
+# deepMRI – Python dependencies (everything except PyTorch)
+# The Dockerfile installs PyTorch separately with the right wheel for each platform.
 #
-# NOTE: The torch line below installs the CPU-only wheel, which works on
-# Apple Silicon (ARM64) and Intel/AMD machines without a GPU.
-# On a Linux server with an NVIDIA GPU, replace it with:
-#   torch>=2.0.0  (and use the pytorch/pytorch Docker base image)
+# For a manual install (outside Docker):
+#   Apple Silicon / any CPU:    pip install torch
+#   Linux AMD64 CPU-only:       pip install torch --index-url https://download.pytorch.org/whl/cpu
+#   Linux AMD64 NVIDIA GPU:     pip install torch --index-url https://download.pytorch.org/whl/cu121
+# Then:
+#   pip install -r requirements.txt
 
---index-url https://download.pytorch.org/whl/cpu
-torch>=2.1.0
-
---index-url https://pypi.org/simple
 numpy>=1.23
 scipy>=1.10
 nibabel>=5.0
