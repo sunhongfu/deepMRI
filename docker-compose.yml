@@ -1,15 +1,15 @@
 # ============================================================
 # deepMRI iQSM+ – Docker Compose
 # ============================================================
-# GPU (requires NVIDIA Container Toolkit):
-#   docker compose up
-#
-# CPU only:
-#   docker compose -f docker-compose.yml up   (edit 'deploy' section below)
+# Works on:
+#   - Apple Silicon (M1/M2/M3) Mac  ← ARM64, CPU inference
+#   - Intel/AMD Mac or Linux         ← AMD64, CPU inference
+#   - Linux with NVIDIA GPU          ← uncomment the 'deploy' block below
 #
 # First-time setup:
 #   docker compose build
 #   docker compose up
+# Then open http://localhost:7860
 # ============================================================
 
 services:
@@ -19,16 +19,21 @@ services:
     ports:
       - "7860:7860"
     volumes:
-      # Mount a local folder to persist outputs between runs
+      # Outputs are saved here on your host machine
       - ./outputs:/tmp/iqsm_outputs
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
-    # GPU support – remove the 'deploy' block if you have no NVIDIA GPU
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
     restart: unless-stopped
+
+    # ── NVIDIA GPU (Linux only) ─────────────────────────────────────────────
+    # Uncomment the block below if you have an NVIDIA GPU and the
+    # NVIDIA Container Toolkit installed (https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+    # Also swap the Dockerfile base image to pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
+    #
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]

@@ -13,8 +13,11 @@
 # Then open http://localhost:7860 in your browser.
 # ============================================================
 
-# Base: PyTorch with CUDA 12.1 (falls back to CPU automatically at runtime)
-FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
+# Base: slim Python image — works natively on both ARM64 (Apple Silicon)
+# and AMD64 (Intel/AMD Linux). PyTorch CPU wheels are installed via pip.
+# For NVIDIA GPU servers, swap this line for:
+#   FROM pytorch/pytorch:2.1.0-cuda12.1-cudnn8-runtime
+FROM python:3.10-slim
 
 LABEL maintainer="Hongfu Sun <hongfu.sun@uq.edu.au>"
 LABEL description="deepMRI iQSM+ – QSM reconstruction web interface"
