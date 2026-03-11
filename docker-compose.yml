@@ -1,0 +1,34 @@
+# ============================================================
+# deepMRI iQSM+ – Docker Compose
+# ============================================================
+# GPU (requires NVIDIA Container Toolkit):
+#   docker compose up
+#
+# CPU only:
+#   docker compose -f docker-compose.yml up   (edit 'deploy' section below)
+#
+# First-time setup:
+#   docker compose build
+#   docker compose up
+# ============================================================
+
+services:
+  deepmri:
+    build: .
+    image: deepmri:latest
+    ports:
+      - "7860:7860"
+    volumes:
+      # Mount a local folder to persist outputs between runs
+      - ./outputs:/tmp/iqsm_outputs
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    # GPU support – remove the 'deploy' block if you have no NVIDIA GPU
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped

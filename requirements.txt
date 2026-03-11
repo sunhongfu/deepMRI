@@ -1,0 +1,11 @@
+# deepMRI – Python dependencies
+# Install with:   pip install -r requirements.txt
+# (PyTorch is listed without CUDA extras so it works on CPU too;
+#  inside the Docker image the base layer already provides CUDA-enabled PyTorch.)
+
+torch>=2.0.0
+numpy>=1.23
+scipy>=1.10
+nibabel>=5.0
+matplotlib>=3.7
+gradio>=4.0

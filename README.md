@@ -2,11 +2,61 @@
 
 **Authors:** Yang Gao, Zhuang Xiong, Hongfu Sun
 
-- This repo is devloped based on Pytorch (1.8 or later) and matlab (R2019a or later). 
+- This repo is devloped based on Pytorch (1.8 or later) and matlab (R2019a or later).
 
 - The codes in this repo were tested on Centos 7.8 with Nvdia Tesla V100 and macos12.0.1/win10/ubuntu19.10 with NViDia 4090.
 
 - Major update, 19, March, 2025: We now have a new and more user-friendly matlab wrapper for iQSM+/iQSM/iQFM/xQSM/xQSM+ reconstuctions (with simpler syntaxes); see repo for iQSM+ ([iQSM+](#head5)) for more details.
+
+---
+
+## 🚀 Quick Start – No MATLAB required
+
+The iQSM+ method is now available as a **browser-based web app** powered by
+[Gradio](https://gradio.app). No MATLAB, no conda setup, no command line needed.
+
+### Option A – Docker (recommended for clinicians)
+
+```bash
+# 1. Install Docker Desktop (https://docs.docker.com/get-docker/)
+# 2. Clone this repo
+git clone https://github.com/sunhongfu/deepMRI.git
+cd deepMRI
+
+# 3. Build and launch (GPU version – needs NVIDIA Container Toolkit)
+docker compose up
+
+# 3b. CPU-only (slower but works on any machine)
+#     Edit docker-compose.yml: remove the 'deploy' block, then:
+docker compose up
+
+# 4. Open in your browser
+#    http://localhost:7860
+```
+
+### Option B – Conda (for researchers)
+
+```bash
+conda env create -f environment.yml   # one-time setup
+conda activate deepmri
+python app/app.py                     # opens http://localhost:7860
+```
+
+### Option C – pip
+
+```bash
+pip install -r requirements.txt
+python app/app.py
+```
+
+**What to expect in the web UI:**
+- Upload phase NIfTI (`.nii` / `.nii.gz`)
+- Enter echo time(s) in seconds
+- Optionally upload magnitude and brain mask
+- Click **Run Reconstruction**
+- Download the QSM result NIfTI and view in FSLeyes / ITK-SNAP / 3D Slicer
+
+---
 
 - Major Update, 31st, Jan, 2023: Delete old-version iQSM checkpoints. Will upload latest codes and checkpoints shortly.
 
