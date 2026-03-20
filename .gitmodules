@@ -1,0 +1,3 @@
+[submodule "iQSM"]
+	path = iQSM
+	url = https://github.com/sunhongfu/iQSM.git
