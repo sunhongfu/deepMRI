@@ -16,3 +16,6 @@
 [submodule "AFTER-QSM"]
 	path = AFTER-QSM
 	url = https://github.com/sunhongfu/AFTER-QSM.git
+[submodule "MoDIP"]
+	path = MoDIP
+	url = https://github.com/sunhongfu/MoDIP.git
