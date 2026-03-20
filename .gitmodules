@@ -7,3 +7,6 @@
 [submodule "xQSM"]
 	path = xQSM
 	url = https://github.com/sunhongfu/xQSM.git
+[submodule "DCRNet"]
+	path = DCRNet
+	url = https://github.com/sunhongfu/DCRNet.git
