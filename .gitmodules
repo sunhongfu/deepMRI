@@ -1,3 +1,6 @@
 [submodule "iQSM"]
 	path = iQSM
 	url = https://github.com/sunhongfu/iQSM.git
+[submodule "iQSM_Plus"]
+	path = iQSM_Plus
+	url = https://github.com/sunhongfu/iQSM_Plus.git
