@@ -10,3 +10,6 @@
 [submodule "DCRNet"]
 	path = DCRNet
 	url = https://github.com/sunhongfu/DCRNet.git
+[submodule "BFRnet"]
+	path = BFRnet
+	url = https://github.com/sunhongfu/BFRnet.git
