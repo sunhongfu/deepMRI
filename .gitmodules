@@ -19,3 +19,6 @@
 [submodule "MoDIP"]
 	path = MoDIP
 	url = https://github.com/sunhongfu/MoDIP.git
+[submodule "DIP-UP"]
+	path = DIP-UP
+	url = https://github.com/sunhongfu/DIP-UP.git
