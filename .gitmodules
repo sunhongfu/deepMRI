@@ -4,3 +4,6 @@
 [submodule "iQSM_Plus"]
 	path = iQSM_Plus
 	url = https://github.com/sunhongfu/iQSM_Plus.git
+[submodule "xQSM"]
+	path = xQSM
+	url = https://github.com/sunhongfu/xQSM.git
