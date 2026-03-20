@@ -1,45 +1,76 @@
-# deepMRI: Deep learning methods for MRI
+# deepMRI: Deep Learning Methods for MRI
 
 **Authors:** Yang Gao, Zhuang Xiong, Hongfu Sun
 
-- This repo is devloped based on Pytorch (1.8 or later) and matlab (R2019a or later).
+This repository is a collection of deep learning tools for MRI reconstruction and quantitative mapping. Each method lives in its own standalone repository (linked below) and is also accessible here as a git submodule.
 
-- The codes in this repo were tested on Centos 7.8 with Nvdia Tesla V100 and macos12.0.1/win10/ubuntu19.10 with NViDia 4090.
-
-- Major update, 19, March, 2025: We now have a new and more user-friendly matlab wrapper for iQSM+/iQSM/iQFM/xQSM/xQSM+ reconstuctions (with simpler syntaxes); see repo for iQSM+ ([iQSM+](#head5)) for more details.
+> **Clinicians / non-coders:** see [Quick Start](#-quick-start--no-matlab-required) for a browser-based web app — no installation needed.
 
 ---
 
-## 🚀 Quick Start – No MATLAB required
+## Projects
 
-The iQSM+ method is now available as a **browser-based web app** powered by
-[Gradio](https://gradio.app). No MATLAB, no conda setup, no command line needed.
+| Method | Task | Paper |
+|--------|------|-------|
+| [iQSM+](#iqsm-plus) | Orientation-adaptive single-step QSM | [MIA 2024](https://doi.org/10.1016/j.media.2024.103160) |
+| [iQSM](#iqsm) | Single-step instant QSM | [NeuroImage 2022](https://www.sciencedirect.com/science/article/pii/S1053811922005274) |
+| [xQSM](#xqsm) | QSM dipole inversion | [NMR Biomed 2021](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/nbm.4461) |
+| [DCRNet](#dcrnet) | QSM + R2* acceleration | [NeuroImage 2021](https://www.sciencedirect.com/science/article/pii/S1053811921006790) |
+| [BFRnet](#bfrnet) | QSM background field removal | [arXiv 2022](https://arxiv.org/abs/2204.02760) |
+| [AFTER-QSM](#after-qsm) | QSM for oblique/anisotropic scans | [NeuroImage 2022](https://www.sciencedirect.com/science/article/pii/S1053811922009636) |
+| [MoDIP](#modip) | Model-based deep image prior QSM | [NeuroImage 2024](https://www.sciencedirect.com/science/article/pii/S1053811924000788) |
+| [DIP-UP](#dip-up) | Deep image prior phase unwrapping | — |
+
+---
+
+## Requirements
+
+- Python 3.7+ with PyTorch 1.8+
+- MATLAB R2019a+ (for MATLAB wrappers)
+- NVIDIA GPU recommended
+
+Tested on: CentOS 7.8 (Tesla V100), macOS 12 / Windows 10 / Ubuntu 19.10 (RTX 4090).
+
+---
+
+## Cloning
+
+To clone this repo including all subprojects:
+
+```bash
+git clone --recurse-submodules https://github.com/sunhongfu/deepMRI.git
+```
+
+---
+
+## Quick Start – No MATLAB Required
+
+The iQSM+ method is available as a **browser-based web app** powered by [Gradio](https://gradio.app). No MATLAB, no conda setup, no command line needed.
 
 ### Option A – Docker (recommended for clinicians)
 
 ```bash
-# 1. Install Docker Desktop (https://docs.docker.com/get-docker/)
+# 1. Install Docker Desktop: https://docs.docker.com/get-docker/
 # 2. Clone this repo
-git clone https://github.com/sunhongfu/deepMRI.git
+git clone --recurse-submodules https://github.com/sunhongfu/deepMRI.git
 cd deepMRI
 
-# 3. Build and launch (GPU version – needs NVIDIA Container Toolkit)
+# 3. Build and launch (GPU – needs NVIDIA Container Toolkit)
 docker compose up
 
-# 3b. CPU-only (slower but works on any machine)
+# 3b. CPU-only (slower, works on any machine)
 #     Edit docker-compose.yml: remove the 'deploy' block, then:
 docker compose up
 
-# 4. Open in your browser
-#    http://localhost:7860
+# 4. Open browser: http://localhost:7860
 ```
 
-### Option B – Conda (for researchers)
+### Option B – Conda
 
 ```bash
-conda env create -f environment.yml   # one-time setup
+conda env create -f environment.yml
 conda activate deepmri
-python app/app.py                     # opens http://localhost:7860
+python app/app.py   # opens http://localhost:7860
 ```
 
 ### Option C – pip
@@ -49,84 +80,91 @@ pip install -r requirements.txt
 python app/app.py
 ```
 
-**What to expect in the web UI:**
-- Upload phase NIfTI (`.nii` / `.nii.gz`)
+**Web UI features:**
+- Upload phase NIfTI (`.nii` / `.nii.gz`) or DICOM
 - Enter echo time(s) in seconds
 - Optionally upload magnitude and brain mask
 - Click **Run Reconstruction**
-- Download the QSM result NIfTI and view in FSLeyes / ITK-SNAP / 3D Slicer
+- Download QSM result NIfTI — view in FSLeyes / ITK-SNAP / 3D Slicer
 
 ---
 
-- Major Update, 31st, Jan, 2023: Delete old-version iQSM checkpoints. Will upload latest codes and checkpoints shortly.
+## iQSM+
 
-&nbsp;
-&nbsp;
-&nbsp;
+**Plug-and-Play Latent Feature Editing for Orientation-Adaptive Quantitative Susceptibility Mapping Neural Networks**
 
-# Projects
-[iQSM+ for orientation-adaptive single-step QSM reconstruction](#head5)
+[standalone repo](https://github.com/sunhongfu/iQSM_Plus) &nbsp;|&nbsp; [source code](https://github.com/sunhongfu/deepMRI/tree/master/iQSM_Plus) &nbsp;|&nbsp; [arXiv](https://arxiv.org/abs/2311.07823) &nbsp;|&nbsp; [MIA 2024](https://doi.org/10.1016/j.media.2024.103160)
 
-[iQSM for single-step instant QSM](#head4)
+![iQSM+ Framework](https://github.com/sunhongfu/deepMRI/blob/master/iQSM_Plus/figs/fig1.png)
 
-[DCRNet for QSM and R2* acceleration](#head3)
+> **Update (March 2025):** New user-friendly MATLAB wrappers for iQSM+/iQSM/iQFM/xQSM/xQSM+ with simpler syntax — see the [iQSM+ repo](https://github.com/sunhongfu/iQSM_Plus) for details.
 
-[xQSM for QSM dipole inversion](#head2)
+---
 
-[BFRnet for QSM background field removal](#head1)
+## iQSM
 
-&nbsp;
-&nbsp;
-&nbsp;
+**Instant Tissue Field and Magnetic Susceptibility Mapping from MRI Raw Phase using Laplacian Enabled Deep Neural Networks**
 
-# <span id="head5"> iQSM+ for orientation-adaptive single-step QSM reconstruction </span>
-**Instant tissue field and magnetic susceptibility mapping from MRI raw phase using Laplacian enabled deep neural networks**
+[standalone repo](https://github.com/sunhongfu/iQSM) &nbsp;|&nbsp; [source code](https://github.com/sunhongfu/deepMRI/tree/master/iQSM) &nbsp;|&nbsp; [data & checkpoints](https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0) &nbsp;|&nbsp; [arXiv](https://arxiv.org/abs/2111.07665) &nbsp;|&nbsp; [NeuroImage 2022](https://www.sciencedirect.com/science/article/pii/S1053811922005274)
 
-[source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/iQSM_Plus) &nbsp;  | &nbsp;   [arXiv (pre-print)](https://arxiv.org/abs/2311.07823) &nbsp;  |  &nbsp;  [MIA (full paper)](https://doi.org/10.1016/j.media.2024.103160)
+![iQSM Framework](https://www.dropbox.com/s/7bxkyu1utxux76k/Figs_1.png?raw=1)
 
-![Whole Framework](https://github.com/sunhongfu/deepMRI/blob/master/iQSM_Plus/figs/fig1.png)
+---
 
-# <span id="head4"> iQSM for single-step instant QSM </span>
-**Instant tissue field and magnetic susceptibility mapping from MRI raw phase using Laplacian enabled deep neural networks**
+## xQSM
 
-[source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/iQSM) &nbsp;  | &nbsp;  [data & checkpoints (dropbox)](https://www.dropbox.com/sh/9kmbytgf3jpj7bh/AACUZJ1KlJ1AFCPMIVyRFJi5a?dl=0) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2111.07665) &nbsp;  |  &nbsp;  [NeuroImage (full paper)](https://www.sciencedirect.com/science/article/pii/S1053811922005274)
+**xQSM: Quantitative Susceptibility Mapping with Octave Convolutional and Noise-Regularized Neural Networks**
 
-![Whole Framework](https://www.dropbox.com/s/7bxkyu1utxux76k/Figs_1.png?raw=1)
+[standalone repo](https://github.com/sunhongfu/xQSM) &nbsp;|&nbsp; [source code](https://github.com/sunhongfu/deepMRI/tree/master/xQSM) &nbsp;|&nbsp; [data & checkpoints](https://www.dropbox.com/sh/weps2m849svsh93/AAAAPqqKcLkL10Arqhy-3h_Fa?dl=0) &nbsp;|&nbsp; [arXiv](https://arxiv.org/abs/2004.06281) &nbsp;|&nbsp; [NMR Biomed 2021](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/nbm.4461)
 
-&nbsp;
-&nbsp;
-&nbsp;
+![xQSM Framework](https://www.dropbox.com/s/bq7gsc540gy2kgc/Fig1.png?raw=1)
 
-# <span id="head3"> DCRNet for QSM and R2* acceleration </span>
-**Accelerating quantitative susceptibility and R2\* mapping using incoherent undersampling and deep neural network reconstruction**
+---
 
-[source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/DCRNet) &nbsp;  | &nbsp;  [data & checkpoints (dropbox)](https://www.dropbox.com/sh/p9k9rq8zux2bkzq/AADSgw3bECQ9o1dPpIoE5b85a?dl=0) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2103.09375) &nbsp;  |  &nbsp;  [NeuroImage (full paper)](https://www.sciencedirect.com/science/article/pii/S1053811921006790)
+## DCRNet
 
-![Whole Framework](https://www.dropbox.com/s/f729s5l2xvpwjfx/Figs_1.png?raw=1)
+**Accelerating Quantitative Susceptibility and R2\* Mapping using Incoherent Undersampling and Deep Neural Network Reconstruction**
 
-&nbsp;
-&nbsp;
-&nbsp;
+[standalone repo](https://github.com/sunhongfu/DCRNet) &nbsp;|&nbsp; [source code](https://github.com/sunhongfu/deepMRI/tree/master/DCRNet) &nbsp;|&nbsp; [data & checkpoints](https://www.dropbox.com/sh/p9k9rq8zux2bkzq/AADSgw3bECQ9o1dPpIoE5b85a?dl=0) &nbsp;|&nbsp; [arXiv](https://arxiv.org/abs/2103.09375) &nbsp;|&nbsp; [NeuroImage 2021](https://www.sciencedirect.com/science/article/pii/S1053811921006790)
 
-# <span id="head2"> xQSM for QSM dipole inversion </span>
-**xQSM: quantitative susceptibility mapping with octave convolutional and noise-regularized neural networks**
+![DCRNet Framework](https://www.dropbox.com/s/f729s5l2xvpwjfx/Figs_1.png?raw=1)
 
-[source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/xQSM) &nbsp;  | &nbsp;  [data & checkpoints (dropbox)](https://www.dropbox.com/sh/weps2m849svsh93/AAAAPqqKcLkL10Arqhy-3h_Fa?dl=0) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2004.06281) &nbsp;  | &nbsp;  [NMR in Biomed (full paper)](https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/nbm.4461)
+---
 
-![Whole Framework](https://www.dropbox.com/s/bq7gsc540gy2kgc/Fig1.png?raw=1)
+## BFRnet
 
-&nbsp;
-&nbsp;
-&nbsp;
+**BFRnet: A Deep Learning-Based MR Background Field Removal Method for QSM of the Brain Containing Significant Pathological Susceptibility Sources**
 
-# <span id="head1"> BFRnet for QSM background field removal </span>
-**BFRnet: A deep learning-based MR background field removal method for QSM of the brain containing significant pathological susceptibility sources**
+[standalone repo](https://github.com/sunhongfu/BFRnet) &nbsp;|&nbsp; [source code](https://github.com/sunhongfu/deepMRI/tree/master/BFRnet) &nbsp;|&nbsp; [data & checkpoints](https://www.dropbox.com/sh/q678oapc65evrfa/AADh2CGeUzhHh6q9t3Fe3fVVa?dl=0) &nbsp;|&nbsp; [arXiv](https://arxiv.org/abs/2204.02760)
 
-[source code (github)](https://github.com/sunhongfu/deepMRI/tree/master/BFRnet) &nbsp;  | &nbsp;  [data & checkpoints (dropbox)](https://www.dropbox.com/sh/q678oapc65evrfa/AADh2CGeUzhHh6q9t3Fe3fVVa?dl=0) &nbsp;  | &nbsp;  [arXiv (pre-print)](https://arxiv.org/abs/2204.02760) &nbsp;  | &nbsp;  
+![BFRnet Framework](https://www.dropbox.com/s/fe408itfqdh61lx/Picture1.tif?raw=1)
 
-![Whole Framework](https://www.dropbox.com/s/fe408itfqdh61lx/Picture1.tif?raw=1)
+---
 
-&nbsp;
-&nbsp;
-&nbsp;
-[⬆ top](#readme)
+## AFTER-QSM
+
+**Affine Transformation Edited and Refined Deep Neural Network for Quantitative Susceptibility Mapping**
+
+[standalone repo](https://github.com/sunhongfu/AFTER-QSM) &nbsp;|&nbsp; [source code](https://github.com/sunhongfu/deepMRI/tree/master/AFTER-QSM) &nbsp;|&nbsp; [NeuroImage 2022](https://www.sciencedirect.com/science/article/pii/S1053811922009636)
+
+Designed for QSM from highly oblique and anisotropic resolution scans (down to 0.6 mm isotropic).
+
+---
+
+## MoDIP
+
+**Quantitative Susceptibility Mapping through Model-Based Deep Image Prior**
+
+[standalone repo](https://github.com/sunhongfu/MoDIP) &nbsp;|&nbsp; [source code](https://github.com/sunhongfu/deepMRI/tree/master/MoDIP) &nbsp;|&nbsp; [NeuroImage 2024](https://www.sciencedirect.com/science/article/pii/S1053811924000788)
+
+---
+
+## DIP-UP
+
+**Deep Image Prior for MRI Phase Unwrapping**
+
+[standalone repo](https://github.com/sunhongfu/DIP-UP) &nbsp;|&nbsp; [source code](https://github.com/sunhongfu/deepMRI/tree/master/DIP-UP)
+
+---
+
+[⬆ top](#deepmri-deep-learning-methods-for-mri)
