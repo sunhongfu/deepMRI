@@ -13,3 +13,6 @@
 [submodule "BFRnet"]
 	path = BFRnet
 	url = https://github.com/sunhongfu/BFRnet.git
+[submodule "AFTER-QSM"]
+	path = AFTER-QSM
+	url = https://github.com/sunhongfu/AFTER-QSM.git
