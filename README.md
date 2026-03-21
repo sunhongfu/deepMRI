@@ -4,7 +4,7 @@
 
 This repository is a collection of deep learning tools for MRI reconstruction and quantitative mapping. Each method lives in its own standalone repository (linked below) and is also accessible here as a git submodule.
 
-> **Clinicians / non-coders:** see [Quick Start](#-quick-start--no-matlab-required) for a browser-based web app — no installation needed.
+> **Clinicians / non-coders:** iQSM+ is available as a browser-based web app — no MATLAB or command line needed. See the [iQSM+ repo](https://github.com/sunhongfu/iQSM_Plus) for Docker and conda instructions.
 
 ---
 
@@ -80,57 +80,11 @@ git submodule update --remote iQSM
 
 ## Requirements
 
+Each method has its own dependencies — see the individual repo for details. General requirements:
+
 - Python 3.7+ with PyTorch 1.8+
-- MATLAB R2019a+ (for MATLAB wrappers)
+- MATLAB R2019a+ (for MATLAB wrappers, not required for web app)
 - NVIDIA GPU recommended
-
-Tested on: CentOS 7.8 (Tesla V100), macOS 12 / Windows 10 / Ubuntu 19.10 (RTX 4090).
-
----
-
-## Quick Start – No MATLAB Required
-
-The iQSM+ method is available as a **browser-based web app** powered by [Gradio](https://gradio.app). No MATLAB, no conda setup, no command line needed.
-
-### Option A – Docker (recommended for clinicians)
-
-```bash
-# 1. Install Docker Desktop: https://docs.docker.com/get-docker/
-# 2. Clone this repo
-git clone --recurse-submodules https://github.com/sunhongfu/deepMRI.git
-cd deepMRI
-
-# 3. Build and launch (GPU – needs NVIDIA Container Toolkit)
-docker compose up
-
-# 3b. CPU-only (slower, works on any machine)
-#     Edit docker-compose.yml: remove the 'deploy' block, then:
-docker compose up
-
-# 4. Open browser: http://localhost:7860
-```
-
-### Option B – Conda
-
-```bash
-conda env create -f environment.yml
-conda activate deepmri
-python app/app.py   # opens http://localhost:7860
-```
-
-### Option C – pip
-
-```bash
-pip install -r requirements.txt
-python app/app.py
-```
-
-**Web UI features:**
-- Upload phase NIfTI (`.nii` / `.nii.gz`) or DICOM
-- Enter echo time(s) in seconds
-- Optionally upload magnitude and brain mask
-- Click **Run Reconstruction**
-- Download QSM result NIfTI — view in FSLeyes / ITK-SNAP / 3D Slicer
 
 ---
 
