@@ -44,14 +44,31 @@ MAG_MULTI=$(compress "$DEMO_DIR/mag_multi_echo.nii")
 MASK_MULTI=$(compress "$DEMO_DIR/mask_multi_echo.nii")
 
 echo ""
+echo "=== Locating iQSM checkpoint files ==="
+# Checkpoints live inside the Dropbox folder under checkpoints/iQSM_and_iQFM/
+CKPT_DIR="${DEMO_DIR}/../checkpoints/iQSM_and_iQFM"
+IQSM_CKPT="$CKPT_DIR/iQSM_UnetPart.pth"
+IQFM_CKPT="$CKPT_DIR/iQFM_UnetPart.pth"
+
+if [[ ! -f "$IQSM_CKPT" || ! -f "$IQFM_CKPT" ]]; then
+    echo "ERROR: Checkpoint files not found at $CKPT_DIR"
+    echo "Expected: iQSM_UnetPart.pth and iQFM_UnetPart.pth"
+    echo "Please adjust CKPT_DIR in this script to point to the correct folder."
+    exit 1
+fi
+
+echo ""
 echo "=== Creating iQSM GitHub Release and uploading ==="
 gh release create v1.0-demo \
     --repo sunhongfu/iQSM \
-    --title "Demo data v1.0" \
-    --notes "Single-echo in-vivo brain demo data for the iQSM web app.
-Parameters: 1×1×1 mm, TE=20 ms, B0=3T." \
+    --title "Demo data and checkpoints v1.0" \
+    --notes "Single-echo in-vivo brain demo data and pretrained checkpoints for iQSM.
+Demo parameters: 1×1×1 mm, TE=20 ms, B0=3T.
+Checkpoints are downloaded automatically by inference.py if not present." \
     "$PH_SINGLE" \
-    "$MASK_SINGLE"
+    "$MASK_SINGLE" \
+    "$IQSM_CKPT" \
+    "$IQFM_CKPT"
 
 echo ""
 echo "=== Creating iQSM_Plus GitHub Release and uploading ==="
