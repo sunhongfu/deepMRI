@@ -23,6 +23,61 @@ This repository is a collection of deep learning tools for MRI reconstruction an
 
 ---
 
+## How the Code is Organised
+
+Each method in this collection lives in its own **standalone GitHub repository**. This deepMRI repo links to all of them as [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) — meaning each subfolder (e.g. `iQSM/`, `xQSM/`) is a pointer to the corresponding standalone repo, not a copy of the files.
+
+**You have two options depending on your needs:**
+
+| Goal | What to do |
+|------|------------|
+| Use or contribute to **one specific method** | Go directly to its standalone repo (links in the table above) and clone that |
+| Get **everything** in one place | Clone this deepMRI repo with `--recurse-submodules` (see below) |
+
+---
+
+## Cloning
+
+### Option 1 — Clone a single method (recommended if you only need one)
+
+Go to the standalone repo for that method and clone it directly, e.g.:
+
+```bash
+git clone https://github.com/sunhongfu/iQSM.git
+```
+
+Standalone repos for all methods are linked in the [Projects](#projects) table above.
+
+### Option 2 — Clone everything
+
+```bash
+git clone --recurse-submodules https://github.com/sunhongfu/deepMRI.git
+```
+
+> **Important:** A plain `git clone` (without `--recurse-submodules`) will give you **empty subfolders**. You must include that flag to get the actual code.
+
+If you already cloned without the flag, run:
+
+```bash
+git submodule update --init --recursive
+```
+
+### Keeping your clone up to date
+
+Each subproject is maintained independently. To pull the latest changes from all subprojects into your deepMRI clone:
+
+```bash
+git submodule update --remote --recursive
+```
+
+Or for a single subproject:
+
+```bash
+git submodule update --remote iQSM
+```
+
+---
+
 ## Requirements
 
 - Python 3.7+ with PyTorch 1.8+
@@ -30,16 +85,6 @@ This repository is a collection of deep learning tools for MRI reconstruction an
 - NVIDIA GPU recommended
 
 Tested on: CentOS 7.8 (Tesla V100), macOS 12 / Windows 10 / Ubuntu 19.10 (RTX 4090).
-
----
-
-## Cloning
-
-To clone this repo including all subprojects:
-
-```bash
-git clone --recurse-submodules https://github.com/sunhongfu/deepMRI.git
-```
 
 ---
 
