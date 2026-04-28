@@ -22,3 +22,6 @@
 [submodule "DIP-UP"]
 	path = DIP-UP
 	url = https://github.com/sunhongfu/DIP-UP.git
+[submodule "DeepRelaxo"]
+	path = DeepRelaxo
+	url = git@github.com:sunhongfu/DeepRelaxo.git
