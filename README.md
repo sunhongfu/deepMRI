@@ -20,7 +20,7 @@ This repository is a collection of deep learning tools for MRI reconstruction an
 | [AFTER-QSM](https://github.com/sunhongfu/AFTER-QSM) | QSM for oblique/anisotropic scans | [NeuroImage 2022](https://doi.org/10.1016/j.neuroimage.2022.119842) |
 | [MoDIP](https://github.com/sunhongfu/MoDIP) | Model-based deep image prior QSM | [NeuroImage 2024](https://doi.org/10.1016/j.neuroimage.2024.120583) |
 | [DIP-UP](https://github.com/sunhongfu/DIP-UP) | Deep image prior phase unwrapping | [Information 2025](https://doi.org/10.3390/info16070592) |
-| [DeepRelaxo](https://github.com/sunhongfu/DeepRelaxo) | Fast brain R2* mapping | [MRM 2025](https://doi.org/10.1002/mrm.70405) |
+| [DeepRelaxo](https://github.com/sunhongfu/DeepRelaxo) | Fast brain R2* mapping | [MRM 2026](https://doi.org/10.1002/mrm.70405) |
 
 ---
 
