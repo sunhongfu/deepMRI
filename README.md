@@ -1,6 +1,6 @@
 # deepMRI: Deep Learning Methods for MRI
 
-**Authors:** Yang Gao, Zhuang Xiong, Hongfu Sun
+**Authors:** Yang Gao, Zhuang Xiong, Xuanyu Zhu, Samiha Prima, Hongfu Sun
 
 This repository is a collection of deep learning tools for MRI reconstruction and quantitative mapping. Each method lives in its own standalone repository (linked below). Each subfolder here contains a short README that links directly to the corresponding standalone repo.
 
